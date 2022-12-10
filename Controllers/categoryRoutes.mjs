@@ -52,3 +52,16 @@ export const updateCategory = expressAsyncHandler(async (req, res) => {
 
     res.status(200).json(category);
 })
+
+// @desc Delete a category
+// route DELETE /categories/:id
+// access Private
+export const deleteCategory = expressAsyncHandler(async (req, res) => {
+    const category = await CategoryModel.findByIdAndDelete(req.params.id)
+
+    if (!category) {
+        return res.status(404).json({message: 'Category not found'})
+    }
+
+    res.status(204)
+})

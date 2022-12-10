@@ -4,7 +4,7 @@ import expressAsyncHandler from "express-async-handler";
 
 // @desc add a new category
 // @route POST /api/categories
-// @ access Private
+// @access Private
 export const addCategory = expressAsyncHandler(async (req, res) => {
     const {name} = req.body;
 
@@ -54,8 +54,8 @@ export const updateCategory = expressAsyncHandler(async (req, res) => {
 })
 
 // @desc Delete a category
-// route DELETE /categories/:id
-// access Private
+// @route DELETE /categories/:id
+// @access Private
 export const deleteCategory = expressAsyncHandler(async (req, res) => {
     const category = await CategoryModel.findByIdAndDelete(req.params.id)
 

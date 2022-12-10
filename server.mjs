@@ -21,6 +21,10 @@ if (process.env.NODE_ENV === 'development') {
 
 // Mount Routes
 app.use('/api/categories', categoryRoutes)
+app.all("*" , (req, res, next) => {
+    const err = new Error(`'${req.originalUrl}' is not a valid route`)
+    next(err.message)
+})
 
 //Error Handler
 app.use((err, req, res, next) => {

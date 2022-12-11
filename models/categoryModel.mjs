@@ -4,6 +4,7 @@ const CategorySchema = new mongoose.Schema(
   {
     name: {
       type: String,
+      trim: true,
       required: [true, "Category name is required"],
       unique: [true, "Category name must be unique"],
       minLength: [3, "Category name must be at least 3 characters"],
@@ -20,6 +21,6 @@ const CategorySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const CategoryModel = mongoose.model("Category", CategorySchema);
+const CategoryModel = new mongoose.model("Category", CategorySchema);
 
 export default CategoryModel;

@@ -68,5 +68,5 @@ export const deleteCategory = expressAsyncHandler(async (req, res, next) => {
     return next(new ApiError("Category is not found", 404));
   }
 
-  res.status(204);
+  res.status(200).json({ message: "Category deleted" });
 });

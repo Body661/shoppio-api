@@ -30,12 +30,14 @@ app.all("*", (req, res, next) => {
 // Error Handling inside Express
 app.use(errorMiddleware)
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`listening on port ${PORT}`);
 })
 
 // Error Handling outside Express
 process.on("unhandledRejection", (err) => {
-    console.error(err)
-    process.exit(1)
+    console.error(`UnhandledRejection error: ${err}`)
+    server.close(() => {
+        process.exit(1)
+    });
 })

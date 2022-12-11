@@ -1,6 +1,7 @@
 import CategoryModel from "../models/categoryModel.mjs";
 import slugify from "slugify";
 import expressAsyncHandler from "express-async-handler";
+import ApiError from "../utils/apiError.mjs";
 
 // @desc add a new category
 // @route POST /api/categories
@@ -27,11 +28,11 @@ export const getCategories = expressAsyncHandler(async (req, res) => {
 // @desc Get a specific category
 // @route GET /api/categories/:id
 // @access Public
-export const getCategory = expressAsyncHandler(async (req, res) => {
+export const getCategory = expressAsyncHandler(async (req, res, next) => {
     const category = await CategoryModel.findById(req.params.id);
 
     if (!category) {
-        return res.status(404).json({message: 'Category not found'})
+        return  next(new ApiError('Category is not found', 404));
     }
 
     res.status(200).json(category);
@@ -40,14 +41,14 @@ export const getCategory = expressAsyncHandler(async (req, res) => {
 // @desc Update a category
 // @route GET /api/categories/:id
 // @access Private
-export const updateCategory = expressAsyncHandler(async (req, res) => {
+export const updateCategory = expressAsyncHandler(async (req, res, next) => {
     const {id} = req.params;
     const {name} = req.body;
 
     const category = await CategoryModel.findByIdAndUpdate(id, {name, slug: slugify(req.body.name)}, {new: true})
 
     if (!category) {
-        return res.status(404).json({message: 'Category not found'})
+        return next(new ApiError('Category is not found', 404));
     }
 
     res.status(200).json(category);
@@ -56,11 +57,11 @@ export const updateCategory = expressAsyncHandler(async (req, res) => {
 // @desc Delete a category
 // @route DELETE /categories/:id
 // @access Private
-export const deleteCategory = expressAsyncHandler(async (req, res) => {
+export const deleteCategory = expressAsyncHandler(async (req, res, next) => {
     const category = await CategoryModel.findByIdAndDelete(req.params.id)
 
     if (!category) {
-        return res.status(404).json({message: 'Category not found'})
+        return next(new ApiError('Category is not found', 404));
     }
 
     res.status(204)

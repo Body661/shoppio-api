@@ -3,6 +3,8 @@ import dotenv from 'dotenv'
 import morgan from 'morgan'
 import dbConnect from './config/db.mjs'
 import categoryRoutes from "./Routes/category.mjs";
+import ApiError from "./utils/apiError.mjs";
+import errorMiddleware from "./middlewares/errorMiddleware.mjs";
 
 dotenv.config({path: 'config.env'})
 
@@ -21,16 +23,19 @@ if (process.env.NODE_ENV === 'development') {
 
 // Mount Routes
 app.use('/api/categories', categoryRoutes)
-app.all("*" , (req, res, next) => {
-    const err = new Error(`'${req.originalUrl}' is not a valid route`)
-    next(err.message)
+app.all("*", (req, res, next) => {
+    next(new ApiError(`${req.originalUrl} is not a valid route`, 400))
 })
 
-//Error Handler
-app.use((err, req, res, next) => {
-    res.status(400).json({err})
-})
+// Error Handling inside Express
+app.use(errorMiddleware)
 
 app.listen(PORT, () => {
     console.log(`listening on port ${PORT}`);
+})
+
+// Error Handling outside Express
+process.on("unhandledRejection", (err) => {
+    console.error(err)
+    process.exit(1)
 })

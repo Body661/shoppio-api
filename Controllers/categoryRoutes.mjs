@@ -1,7 +1,7 @@
-import CategoryModel from "../models/categoryModel.mjs";
 import slugify from "slugify";
 import expressAsyncHandler from "express-async-handler";
 import ApiError from "../utils/apiError.mjs";
+import CategoryModel from "../models/categoryModel.mjs";
 
 // @desc add a new category
 // @route POST /api/categories

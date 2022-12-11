@@ -4,7 +4,7 @@ import ApiError from "../utils/apiError.mjs";
 import SubcategoryModel from "../models/subcategoryModel.mjs";
 
 const addSubcategory = expressAsyncHandler(async (req, res, next) => {
-  const name = req.body.name;
+  const { name } = req.body;
 
   const subcategory = await SubcategoryModel.create({
     name,

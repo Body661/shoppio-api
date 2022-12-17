@@ -3,7 +3,7 @@ import expressAsyncHandler from "express-async-handler";
 import ApiError from "../utils/apiError.mjs";
 import CategoryModel from "../models/categoryModel.mjs";
 
-// @desc add a new category
+// @desc Create a new category
 // @route POST /api/categories
 // @access Private
 export const addCategory = expressAsyncHandler(async (req, res) => {

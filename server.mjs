@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import dbConnect from "./config/db.mjs";
 import categoryRoutes from "./Routes/category.mjs";
+import subcategoryRoutes from "./Routes/subcategory.mjs";
 import ApiError from "./utils/apiError.mjs";
 import errorMiddleware from "./middlewares/errorMiddleware.mjs";
 
@@ -23,6 +24,8 @@ if (process.env.NODE_ENV === "development") {
 
 // Mount Routes
 app.use("/api/categories", categoryRoutes);
+app.use("/api/subcategories", subcategoryRoutes);
+
 app.all("*", (req, res, next) => {
   next(new ApiError(`${req.originalUrl} is not a valid route`, 400));
 });

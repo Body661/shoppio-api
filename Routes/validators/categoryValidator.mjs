@@ -1,10 +1,9 @@
 import { check } from "express-validator";
-import validationMiddleware from "../../middlewares/validationMiddleware.mjs";
-import validatorMiddleware from "../../middlewares/validationMiddleware.mjs";
+import validatorMiddleware from "../../middlewares/validatorMiddleware.mjs";
 
 export const getCategoryValidator = [
   check("id").isMongoId().withMessage("Category ID is not valid"),
-  validationMiddleware,
+  validatorMiddleware,
 ];
 
 export const createCategoryValidator = [
@@ -34,5 +33,5 @@ export const updateCategoryValidator = [
 
 export const deleteCategoryValidator = [
   check("id").isMongoId().withMessage("Category ID is not valid"),
-  validationMiddleware,
+  validatorMiddleware,
 ];

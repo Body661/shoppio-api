@@ -28,13 +28,7 @@ export const getSubcategories = expressAsyncHandler(async (req, res, next) => {
 
   // const { parentCat } = req.params;
 
-  const subcategories = await SubcategoryModel.find({})
-    .populate({
-      path: "category",
-      select: "name -_id",
-    })
-    .skip(skip)
-    .limit(limit);
+  const subcategories = await SubcategoryModel.find({}).skip(skip).limit(limit);
 
   res.status(200).json({ page, amount: subcategories.length, subcategories });
 });
@@ -45,10 +39,7 @@ export const getSubcategories = expressAsyncHandler(async (req, res, next) => {
 export const getSubcategory = expressAsyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
-  const subcategory = await SubcategoryModel.findById(id).populate({
-    path: "category",
-    select: "name -_id",
-  });
+  const subcategory = await SubcategoryModel.findById(id);
 
   if (!subcategory) {
     return next(new ApiError("Subcategory not found", 404));

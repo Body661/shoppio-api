@@ -18,7 +18,7 @@ export const addCategory = expressAsyncHandler(async (req, res) => {
 // @access Public
 export const getCategories = expressAsyncHandler(async (req, res) => {
   const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 2;
+  const limit = req.query.limit * 1 || 50;
   const skip = (page - 1) * limit;
 
   const categories = await CategoryModel.find().skip(skip).limit(limit);

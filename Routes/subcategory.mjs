@@ -6,21 +6,21 @@ import {
   getSubcategory,
   updateSubcategory,
 } from "../Controllers/subcategoryRoutes.mjs";
+
 import {
   createSubcategoryValidator,
   deleteSubcategoryValidator,
+  // getSubcategoriesValidator,
   getSubcategoryValidator,
   updateSubcategoryValidator,
 } from "./validators/subcategoryValidators.mjs";
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router
   .route("/")
   .post(...createSubcategoryValidator, addSubcategory)
   .get(getSubcategories);
-
-// router.route("/:parentCat").get(getSubcategories);
 
 router
   .route("/:id")

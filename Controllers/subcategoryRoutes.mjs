@@ -23,12 +23,15 @@ export const addSubcategory = expressAsyncHandler(async (req, res, next) => {
 // @access Public
 export const getSubcategories = expressAsyncHandler(async (req, res, next) => {
   const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 2;
+  const limit = req.query.limit * 1 || 50;
   const skip = (page - 1) * limit;
 
-  // const { parentCat } = req.params;
+  let filter = {};
+  if (req.params.categoryId) filter = { category: req.params.categoryId };
 
-  const subcategories = await SubcategoryModel.find({}).skip(skip).limit(limit);
+  const subcategories = await SubcategoryModel.find(filter)
+    .skip(skip)
+    .limit(limit);
 
   res.status(200).json({ page, amount: subcategories.length, subcategories });
 });

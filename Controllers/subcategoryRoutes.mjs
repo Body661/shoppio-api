@@ -7,12 +7,13 @@ import SubcategoryModel from "../models/subcategoryModel.mjs";
 // @route POST /api/subcategories
 // @access Private
 export const addSubcategory = expressAsyncHandler(async (req, res, next) => {
-  const { name, category } = req.body;
+  const { name } = req.body;
+  const { categoryId } = req.params;
 
   const subcategory = await SubcategoryModel.create({
     name,
     slug: slugify(name),
-    category,
+    category: categoryId,
   });
 
   res.status(201).json(subcategory);
@@ -21,15 +22,20 @@ export const addSubcategory = expressAsyncHandler(async (req, res, next) => {
 // @desc Get all subcategory
 // @route GET /api/subcategories
 // @access Public
+
+export const createFilterObj = (req, res, next) => {
+  let filter = {};
+  if (req.params.categoryId) filter = { category: req.params.categoryId };
+  req.filter = filter;
+  next();
+};
+
 export const getSubcategories = expressAsyncHandler(async (req, res, next) => {
   const page = req.query.page * 1 || 1;
   const limit = req.query.limit * 1 || 50;
   const skip = (page - 1) * limit;
 
-  let filter = {};
-  if (req.params.categoryId) filter = { category: req.params.categoryId };
-
-  const subcategories = await SubcategoryModel.find(filter)
+  const subcategories = await SubcategoryModel.find(req.filter)
     .skip(skip)
     .limit(limit);
 

@@ -8,7 +8,7 @@ export const createSubcategoryValidator = [
     .isLength({ min: 2, max: 33 })
     .withMessage("Category name must be between 2 and 32 characters"),
 
-  check("category")
+  check("categoryId")
     .notEmpty()
     .withMessage("Subcategory must be belong to a category")
     .isMongoId()

@@ -1,6 +1,7 @@
 import express from "express";
 import {
   addSubcategory,
+  createFilterObj,
   deleteSubcategory,
   getSubcategories,
   getSubcategory,
@@ -10,7 +11,6 @@ import {
 import {
   createSubcategoryValidator,
   deleteSubcategoryValidator,
-  // getSubcategoriesValidator,
   getSubcategoryValidator,
   updateSubcategoryValidator,
 } from "./validators/subcategoryValidators.mjs";
@@ -20,7 +20,7 @@ const router = express.Router({ mergeParams: true });
 router
   .route("/")
   .post(...createSubcategoryValidator, addSubcategory)
-  .get(getSubcategories);
+  .get(createFilterObj, getSubcategories);
 
 router
   .route("/:id")

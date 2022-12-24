@@ -12,7 +12,7 @@ import {
   deleteCategoryValidator,
   getCategoryValidator,
   updateCategoryValidator,
-} from "./validators/categoryValidator.mjs";
+} from "./validators/categoryValidators.mjs";
 
 import subcategoryRoutes from "./subcategory.mjs";
 

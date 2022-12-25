@@ -34,14 +34,23 @@ export const getProducts = expressAsyncHandler(async (req, res) => {
   );
 
   // Build query
-  const query = ProductModel.find(JSON.parse(queryString))
+  let query = ProductModel.find(JSON.parse(queryString))
     .skip(skip)
     .limit(limit)
+    .sort()
     .populate([
       { path: "category", select: "name -_id" },
       { path: "subcategories", select: "name -_id" },
       { path: "brand", select: "name -_id" },
     ]);
+
+  //3) Sorting
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(",").join(" ");
+    query = query.sort(sortBy);
+  } else {
+    query = query.sort("-createdAt");
+  }
 
   // Execute query
   const products = await query;

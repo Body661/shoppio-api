@@ -16,19 +16,35 @@ export const addProduct = expressAsyncHandler(async (req, res) => {
 // @route GET /api/products
 // @access Public
 export const getProducts = expressAsyncHandler(async (req, res) => {
+  //1) Pagination
   const page = req.query.page * 1 || 1;
   const limit = req.query.limit * 1 || 50;
   const skip = (page - 1) * limit;
 
-  const products = await ProductModel.find({})
+  //2) Filtering
+  const filter = { ...req.query };
+  const excludesFileds = ["page", "sort", "limit", "fields"];
+  excludesFileds.forEach((field) => delete filter[field]);
+
+  // Apply filters using [gte | gt | lte | lt]
+  let queryString = JSON.stringify(filter);
+  queryString = queryString.replace(
+    /(gte|gt|lte|lt)\b/g,
+    (match) => `$${match}`
+  );
+
+  // Build query
+  const query = ProductModel.find(JSON.parse(queryString))
     .skip(skip)
     .limit(limit)
     .populate([
       { path: "category", select: "name -_id" },
-      { path: "subcategory", select: "name -_id" },
+      { path: "subcategories", select: "name -_id" },
       { path: "brand", select: "name -_id" },
     ]);
 
+  // Execute query
+  const products = await query;
   res.status(200).json({ page, amount: products.length, data: products });
 });
 
@@ -40,7 +56,7 @@ export const getProduct = expressAsyncHandler(async (req, res, next) => {
 
   const product = await ProductModel.findById(id).populate([
     { path: "category", select: "name" },
-    { path: "subcategory", select: "name -_id" },
+    { path: "subcategories", select: "name -_id" },
     { path: "brand", select: "name -_id" },
   ]);
 

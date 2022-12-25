@@ -37,7 +37,6 @@ export const getProducts = expressAsyncHandler(async (req, res) => {
   let query = ProductModel.find(JSON.parse(queryString))
     .skip(skip)
     .limit(limit)
-    .sort()
     .populate([
       { path: "category", select: "name -_id" },
       { path: "subcategories", select: "name -_id" },
@@ -50,6 +49,14 @@ export const getProducts = expressAsyncHandler(async (req, res) => {
     query = query.sort(sortBy);
   } else {
     query = query.sort("-createdAt");
+  }
+
+  //4)
+  if (req.query.fields) {
+    const fields = req.query.fields.split(",").join(" ");
+    query = query.select(fields);
+  } else {
+    query = query.select("-__v");
   }
 
   // Execute query

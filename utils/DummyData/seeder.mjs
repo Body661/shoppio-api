@@ -36,9 +36,11 @@ const destroyData = async () => {
   }
 };
 
-// node seeder.mjs -d
+// node seeder.mjs -i
 if (process.argv[2] === "-i") {
   insertData();
+
+  // node seeder.mjs -d
 } else if (process.argv[2] === "-d") {
   destroyData();
 }

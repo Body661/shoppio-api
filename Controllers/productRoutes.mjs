@@ -51,12 +51,23 @@ export const getProducts = expressAsyncHandler(async (req, res) => {
     query = query.sort("-createdAt");
   }
 
-  //4)
+  //4) Fields Limiting
   if (req.query.fields) {
     const fields = req.query.fields.split(",").join(" ");
     query = query.select(fields);
   } else {
     query = query.select("-__v");
+  }
+
+  //5) Search
+  if (req.query.keyword) {
+    const searchQuery = {};
+    searchQuery.$or = [
+      { title: { $regex: req.query.keyword, $options: "i" } },
+      { description: { $regex: req.query.keyword, $options: "i" } },
+    ];
+
+    query = query.find(searchQuery);
   }
 
   // Execute query

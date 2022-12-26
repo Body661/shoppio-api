@@ -2,11 +2,12 @@ import slugify from "slugify";
 import expressAsyncHandler from "express-async-handler";
 import ApiError from "../utils/apiError.mjs";
 import SubcategoryModel from "../models/subcategoryModel.mjs";
+import ApiFeatures from "../utils/apiFeatures.mjs";
 
 // @desc Create a new Subcategory
 // @route POST /api/subcategories
 // @access Private
-export const addSubcategory = expressAsyncHandler(async (req, res, next) => {
+export const addSubcategory = expressAsyncHandler(async (req, res) => {
   const { name } = req.body;
   const { categoryId } = req.params;
 
@@ -30,16 +31,22 @@ export const createFilterObj = (req, res, next) => {
   next();
 };
 
-export const getSubcategories = expressAsyncHandler(async (req, res, next) => {
-  const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 50;
-  const skip = (page - 1) * limit;
+export const getSubcategories = expressAsyncHandler(async (req, res) => {
+  // Build query
+  const docsCount = await SubcategoryModel.countDocuments();
+  const apiFeatures = new ApiFeatures(SubcategoryModel.find(), req.query)
+    .paginate(docsCount)
+    .search()
+    .limit()
+    .sort();
 
-  const subcategories = await SubcategoryModel.find(req.filter)
-    .skip(skip)
-    .limit(limit);
+  // Execute query
+  const { query, paginationRes } = apiFeatures;
+  const subcategories = await query;
 
-  res.status(200).json({ page, amount: subcategories.length, subcategories });
+  res
+    .status(200)
+    .json({ amount: subcategories.length, paginationRes, subcategories });
 });
 
 // @desc Get a specific subcategory

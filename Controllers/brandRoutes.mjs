@@ -2,6 +2,7 @@ import expressAsyncHandler from "express-async-handler";
 import slugify from "slugify";
 import ApiError from "../utils/apiError.mjs";
 import BrandModel from "../models/brandModel.mjs";
+import ApiFeatures from "../utils/apiFeatures.mjs";
 
 // @desc Create a new brand
 // @route POST /api/brands
@@ -17,12 +18,19 @@ export const addBrand = expressAsyncHandler(async (req, res) => {
 // @route GET /api/brands
 // @access Public
 export const getBrands = expressAsyncHandler(async (req, res) => {
-  const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 50;
-  const skip = (page - 1) * limit;
+  // Build query
+  const docsCount = await BrandModel.countDocuments();
+  const apiFeatures = new ApiFeatures(BrandModel.find(), req.query)
+    .paginate(docsCount)
+    .search()
+    .limit()
+    .sort();
 
-  const brands = await BrandModel.find({}).skip(skip).limit(limit);
-  res.status(200).json({ page, amount: brands.length, data: brands });
+  // Execute query
+  const { query, paginationRes } = apiFeatures;
+  const brands = await query;
+
+  res.status(200).json({ amount: brands.length, paginationRes, data: brands });
 });
 
 // @desc Get a specific brand

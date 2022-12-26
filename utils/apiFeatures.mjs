@@ -42,13 +42,19 @@ class ApiFeatures {
     return this;
   }
 
-  search() {
+  search(modelName) {
     if (this.queryString.keyword) {
       const searchQuery = {};
-      searchQuery.$or = [
-        { title: { $regex: this.queryString.keyword, $options: "i" } },
-        { description: { $regex: this.queryString.keyword, $options: "i" } },
-      ];
+      if (modelName === "Products") {
+        searchQuery.$or = [
+          { title: { $regex: this.queryString.keyword, $options: "i" } },
+          { description: { $regex: this.queryString.keyword, $options: "i" } },
+        ];
+      } else {
+        searchQuery.$or = [
+          { name: { $regex: this.queryString.keyword, $options: "i" } },
+        ];
+      }
 
       this.query = this.query.find(searchQuery);
     }
@@ -77,6 +83,12 @@ class ApiFeatures {
 
     this.query = this.query.skip(skip).limit(limit);
     this.paginationRes = pagination;
+
+    return this;
+  }
+
+  populate(arr) {
+    this.query = this.query.populate(arr);
 
     return this;
   }

@@ -17,22 +17,23 @@ export const addProduct = expressAsyncHandler(async (req, res) => {
 // @route GET /api/products
 // @access Public
 export const getProducts = expressAsyncHandler(async (req, res) => {
+  // Build query
   const docsCount = await ProductModel.countDocuments();
   const apiFeatures = new ApiFeatures(ProductModel.find(), req.query)
     .paginate(docsCount)
     .filter()
-    .search()
+    .search("Products")
     .limit()
-    .sort();
-  // .populate([
-  //   { path: "category", select: "name -_id" },
-  //   { path: "subcategories", select: "name -_id" },
-  //   { path: "brand", select: "name -_id" },
-  // ]);
+    .sort()
+    .populate([
+      { path: "category", select: "name -_id" },
+      { path: "subcategories", select: "name -_id" },
+      { path: "brand", select: "name -_id" },
+    ]);
 
   // Execute query
   const { query, paginationRes } = apiFeatures;
-  const products = await apiFeatures.query;
+  const products = await query;
   res
     .status(200)
     .json({ amount: products.length, paginationRes, data: products });

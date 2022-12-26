@@ -2,6 +2,7 @@ import slugify from "slugify";
 import expressAsyncHandler from "express-async-handler";
 import ApiError from "../utils/apiError.mjs";
 import CategoryModel from "../models/categoryModel.mjs";
+import ApiFeatures from "../utils/apiFeatures.mjs";
 
 // @desc Create a new category
 // @route POST /api/categories
@@ -17,12 +18,21 @@ export const addCategory = expressAsyncHandler(async (req, res) => {
 // @route GET /api/categories
 // @access Public
 export const getCategories = expressAsyncHandler(async (req, res) => {
-  const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 50;
-  const skip = (page - 1) * limit;
+  // Build query
+  const docsCount = await CategoryModel.countDocuments();
+  const apiFeatures = new ApiFeatures(CategoryModel.find(), req.query)
+    .paginate(docsCount)
+    .search()
+    .limit()
+    .sort();
 
-  const categories = await CategoryModel.find().skip(skip).limit(limit);
-  res.status(200).json({ page, amount: categories.length, data: categories });
+  // Execute query
+  const { query, paginationRes } = apiFeatures;
+  const categories = await query;
+
+  res
+    .status(200)
+    .json({ amount: categories.length, paginationRes, data: categories });
 });
 
 // @desc Get a specific category

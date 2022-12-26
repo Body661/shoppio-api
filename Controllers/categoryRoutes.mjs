@@ -1,82 +1,37 @@
-import slugify from "slugify";
-import expressAsyncHandler from "express-async-handler";
-import ApiError from "../utils/apiError.mjs";
 import CategoryModel from "../models/categoryModel.mjs";
-import ApiFeatures from "../utils/apiFeatures.mjs";
+import * as factory from "../utils/factoryHandler.mjs";
 
 // @desc Create a new category
 // @route POST /api/categories
 // @access Private
-export const addCategory = expressAsyncHandler(async (req, res) => {
-  const { name } = req.body;
-
-  const category = await CategoryModel.create({ name, slug: slugify(name) });
-  res.status(201).json(category);
-});
+export const addCategory = factory.createDocument(CategoryModel);
 
 // @desc Get all categories
 // @route GET /api/categories
 // @access Public
-export const getCategories = expressAsyncHandler(async (req, res) => {
-  // Build query
-  const docsCount = await CategoryModel.countDocuments();
-  const apiFeatures = new ApiFeatures(CategoryModel.find(), req.query)
-    .paginate(docsCount)
-    .search()
-    .limit()
-    .sort();
-
-  // Execute query
-  const { query, paginationRes } = apiFeatures;
-  const categories = await query;
-
-  res
-    .status(200)
-    .json({ amount: categories.length, paginationRes, data: categories });
-});
+export const getCategories = factory.getAllDocuments(CategoryModel);
 
 // @desc Get a specific category
 // @route GET /api/categories/:id
 // @access Public
-export const getCategory = expressAsyncHandler(async (req, res, next) => {
-  const category = await CategoryModel.findById(req.params.id);
-
-  if (!category) {
-    return next(new ApiError("Category is not found", 404));
-  }
-
-  res.status(200).json(category);
-});
+export const getCategory = factory.getDocument(
+  CategoryModel,
+  "Category not found"
+);
 
 // @desc Update a category
 // @route GET /api/categories/:id
 // @access Private
-export const updateCategory = expressAsyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const { name } = req.body;
-
-  const category = await CategoryModel.findByIdAndUpdate(
-    id,
-    { name, slug: slugify(req.body.name) },
-    { new: true }
-  );
-
-  if (!category) {
-    return next(new ApiError("Category is not found", 404));
-  }
-
-  res.status(200).json(category);
-});
+export const updateCategory = factory.updateDocument(
+  CategoryModel,
+  "Category not found"
+);
 
 // @desc Delete a category
 // @route DELETE /categories/:id
 // @access Private
-export const deleteCategory = expressAsyncHandler(async (req, res, next) => {
-  const category = await CategoryModel.findByIdAndDelete(req.params.id);
-
-  if (!category) {
-    return next(new ApiError("Category is not found", 404));
-  }
-
-  res.status(200).json({ message: "Category deleted" });
-});
+export const deleteCategory = factory.deleteDocument(
+  CategoryModel,
+  "Category not found",
+  "Category deleted successfully"
+);

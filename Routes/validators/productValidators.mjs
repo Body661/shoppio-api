@@ -81,8 +81,8 @@ export const createProductValidator = [
     .withMessage("must be at least 3 chars")
     .notEmpty()
     .withMessage("Product title is required")
-    .custom((val, { req }) => {
-      req.body.slug = slugify(val);
+    .custom((value, { req }) => {
+      req.body.slug = slugify(value);
       return true;
     }),
   check("description")
@@ -144,8 +144,8 @@ export const updateProductValidator = [
   body("title")
     .optional()
     .notEmpty()
-    .custom((val, { req }) => {
-      req.body.slug = slugify(val);
+    .custom((value, { req }) => {
+      req.body.slug = slugify(value);
       return true;
     }),
   check("description")

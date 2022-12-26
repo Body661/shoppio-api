@@ -1,4 +1,5 @@
 import { check } from "express-validator";
+import slugify from "slugify";
 import validatorMiddleware from "../../middlewares/validatorMiddleware.mjs";
 
 export const addBrandValidator = [
@@ -9,7 +10,11 @@ export const addBrandValidator = [
       min: 2,
       max: 32,
     })
-    .withMessage("Brand name must be between 2 and 32 characters"),
+    .withMessage("Brand name must be between 2 and 32 characters")
+    .custom((value, { req }) => {
+      req.body.slug = slugify(value);
+      return true;
+    }),
   validatorMiddleware,
 ];
 
@@ -27,7 +32,11 @@ export const updateBrandValidator = [
       min: 2,
       max: 32,
     })
-    .withMessage("Brand name must be between 2 and 32 characters"),
+    .withMessage("Brand name must be between 2 and 32 characters")
+    .custom((value, { req }) => {
+      req.body.slug = slugify(value);
+      return true;
+    }),
   validatorMiddleware,
 ];
 

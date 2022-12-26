@@ -86,12 +86,6 @@ class ApiFeatures {
 
     return this;
   }
-
-  populate(arr) {
-    this.query = this.query.populate(arr);
-
-    return this;
-  }
 }
 
 export default ApiFeatures;

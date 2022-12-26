@@ -1,104 +1,48 @@
-import slugify from "slugify";
-import expressAsyncHandler from "express-async-handler";
-import ApiError from "../utils/apiError.mjs";
 import SubcategoryModel from "../models/subcategoryModel.mjs";
-import ApiFeatures from "../utils/apiFeatures.mjs";
+import * as factory from "../utils/factoryHandler.mjs";
 
 // @desc Create a new Subcategory
 // @route POST /api/subcategories
 // @access Private
-export const addSubcategory = expressAsyncHandler(async (req, res) => {
-  const { name } = req.body;
-  const { categoryId } = req.params;
-
-  const subcategory = await SubcategoryModel.create({
-    name,
-    slug: slugify(name),
-    category: categoryId,
-  });
-
-  res.status(201).json(subcategory);
-});
-
-// @desc Get all subcategory
-// @route GET /api/subcategories
-// @access Public
+export const addSubcategory = factory.createDocument(SubcategoryModel);
 
 export const createFilterObj = (req, res, next) => {
   let filter = {};
   if (req.params.categoryId) filter = { category: req.params.categoryId };
-  req.filter = filter;
+  req.filterObj = filter;
   next();
 };
 
-export const getSubcategories = expressAsyncHandler(async (req, res) => {
-  // Build query
-  const docsCount = await SubcategoryModel.countDocuments();
-  const apiFeatures = new ApiFeatures(SubcategoryModel.find(), req.query)
-    .paginate(docsCount)
-    .search()
-    .limit()
-    .sort();
+// @desc_1 Get all subcategories
+// @route_1 GET /api/subcategories
+// @access_1 Public
 
-  // Execute query
-  const { query, paginationRes } = apiFeatures;
-  const subcategories = await query;
-
-  res
-    .status(200)
-    .json({ amount: subcategories.length, paginationRes, subcategories });
-});
+// @desc_2 Get subcategories for a specific category
+// @route_2 GET /api/category/:categoryId/subcategories
+// @access_2 Public
+export const getSubcategories = factory.getAllDocuments(SubcategoryModel);
 
 // @desc Get a specific subcategory
 // @route GET /api/subcategories/:id
 // @access Public
-export const getSubcategory = expressAsyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-
-  const subcategory = await SubcategoryModel.findById(id);
-
-  if (!subcategory) {
-    return next(new ApiError("Subcategory not found", 404));
-  }
-
-  res.status(200).json({ subcategory });
-});
+export const getSubcategory = factory.getDocument(
+  SubcategoryModel,
+  "Subcategory not found"
+);
 
 // @desc Update a subcategories
 // @route PUT /api/subcategories/:id
 // @access Private
-export const updateSubcategory = expressAsyncHandler(async (req, res, next) => {
-  const { name, category } = req.body;
-  const { id } = req.params;
-
-  const subcategory = await SubcategoryModel.findByIdAndUpdate(
-    id,
-    {
-      name,
-      slug: slugify(name),
-      category,
-    },
-    { new: true }
-  );
-
-  if (!subcategory) {
-    return next(new ApiError("Subcategory not found", 404));
-  }
-
-  res.status(200).json(subcategory);
-});
+export const updateSubcategory = factory.updateDocument(
+  SubcategoryModel,
+  "Subcategory not found"
+);
 
 // @desc Delete a subcategories
 // @route DELETE /api/subcategories/:id
 // @access Private
-export const deleteSubcategory = expressAsyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-
-  const subcategory = await SubcategoryModel.findByIdAndDelete(id);
-
-  if (!subcategory) {
-    return next(new ApiError("Subcategory is not found", 404));
-  }
-
-  res.status(200).json({ message: "Subcategory deleted" });
-});
+export const deleteSubcategory = factory.deleteDocument(
+  SubcategoryModel,
+  "Subcategory not found",
+  "Subcategory deleted successfully"
+);

@@ -30,6 +30,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 const upload = multer({ storage, fileFilter });
+export const uploadCatImg = upload.single("image");
 
 export const imageProcessing = expressAsyncHandler(async (req, res, next) => {
   const filename = `category-${uuid()}-${Date.now()}.jpeg`;
@@ -42,8 +43,6 @@ export const imageProcessing = expressAsyncHandler(async (req, res, next) => {
 
   next();
 });
-
-export const uploadCatImg = upload.single("image");
 
 // @desc Create a new category
 // @route POST /api/categories

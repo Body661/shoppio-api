@@ -4,7 +4,9 @@ import {
   deleteCategory,
   getCategories,
   getCategory,
+  imageProcessing,
   updateCategory,
+  uploadCatImg,
 } from "../Controllers/categoryRoutes.mjs";
 
 import {
@@ -22,7 +24,7 @@ router.use("/:categoryId/subcategories", subcategoryRoutes);
 
 router
   .route("/")
-  .post(...createCategoryValidator, addCategory)
+  .post(uploadCatImg, imageProcessing, ...createCategoryValidator, addCategory)
   .get(getCategories);
 
 router

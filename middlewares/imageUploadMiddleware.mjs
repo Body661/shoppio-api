@@ -1,7 +1,7 @@
 import multer from "multer";
 import ApiError from "../utils/apiError.mjs";
 
-const uploadSingle = (fieldName) => {
+const multerOptions = () => {
   const storage = multer.memoryStorage();
 
   const fileFilter = (req, file, cb) => {
@@ -11,12 +11,12 @@ const uploadSingle = (fieldName) => {
       cb(new ApiError("Only images are allowed", 400), false);
     }
   };
-  const upload = multer({
+  return multer({
     storage,
     fileFilter,
   });
-
-  return upload.single(fieldName);
 };
 
-export default uploadSingle;
+export const uploadSingle = (fieldName) => multerOptions().single(fieldName);
+
+export const uploadMultiple = (fields) => multerOptions().fields(fields);

@@ -4,7 +4,9 @@ import {
   deleteProduct,
   getProduct,
   getProducts,
+  imageProcessing,
   updateProduct,
+  uploadProductImgs,
 } from "../Controllers/productRoutes.mjs";
 import {
   createProductValidator,
@@ -17,12 +19,22 @@ const router = express.Router();
 
 router
   .route("/")
-  .post(...createProductValidator, addProduct)
+  .post(
+    uploadProductImgs,
+    imageProcessing,
+    ...createProductValidator,
+    addProduct
+  )
   .get(getProducts);
 
 router
   .route("/:id")
   .get(...getProductValidator, getProduct)
-  .put(...updateProductValidator, updateProduct)
+  .put(
+    uploadProductImgs,
+    imageProcessing,
+    ...updateProductValidator,
+    updateProduct
+  )
   .delete(...deleteProductValidator, deleteProduct);
 export default router;

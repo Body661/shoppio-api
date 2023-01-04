@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import mongoose from "mongoose";
 
 const CategorySchema = new mongoose.Schema(

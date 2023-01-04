@@ -3,7 +3,7 @@ import sharp from "sharp";
 import expressAsyncHandler from "express-async-handler";
 import CategoryModel from "../models/categoryModel.mjs";
 import * as factory from "../utils/factoryHandler.mjs";
-import uploadSingle from "../middlewares/imageUploadMiddleware.mjs";
+import { uploadSingle } from "../middlewares/imageUploadMiddleware.mjs";
 
 export const uploadCatImg = uploadSingle("img");
 export const imageProcessing = expressAsyncHandler(async (req, res, next) => {

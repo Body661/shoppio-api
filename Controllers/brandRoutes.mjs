@@ -3,7 +3,7 @@ import { uuid } from "uuidv4";
 import sharp from "sharp";
 import BrandModel from "../models/brandModel.mjs";
 import * as factory from "../utils/factoryHandler.mjs";
-import uploadSingle from "../middlewares/imageUploadMiddleware.mjs";
+import { uploadSingle } from "../middlewares/imageUploadMiddleware.mjs";
 
 export const uploadBrandImg = uploadSingle("img");
 

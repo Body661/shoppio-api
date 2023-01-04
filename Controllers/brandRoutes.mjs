@@ -8,12 +8,12 @@ import uploadSingle from "../middlewares/imageUploadMiddleware.mjs";
 export const uploadBrandImg = uploadSingle("img");
 
 export const imageProcessing = expressAsyncHandler(async (req, res, next) => {
-  const filename = `brand-${uuid()}-${Date.now()}.jpeg`;
+  const filename = `brand-${uuid()}-${Date.now()}.png`;
 
   await sharp(req.file.buffer)
     .resize(600, 600)
-    .toFormat("jpeg")
-    .jpeg({ quality: 90 })
+    .toFormat("png")
+    .png({ quality: 90 })
     .toFile(`uploads/brands/${filename}`);
 
   req.body.img = filename;

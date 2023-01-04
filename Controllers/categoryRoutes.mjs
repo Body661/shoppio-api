@@ -7,11 +7,11 @@ import uploadSingle from "../middlewares/imageUploadMiddleware.mjs";
 
 export const uploadCatImg = uploadSingle("img");
 export const imageProcessing = expressAsyncHandler(async (req, res, next) => {
-  const filename = `category-${uuid()}-${Date.now()}.jpeg`;
+  const filename = `category-${uuid()}-${Date.now()}.png`;
 
   await sharp(req.file.buffer)
     .resize(600, 600)
-    .toFormat("jpeg")
+    .toFormat("png")
     .jpeg({ quality: 90 })
     .toFile(`uploads/categories/${filename}`);
 

@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import mongoose from "mongoose";
 
 const CategorySchema = new mongoose.Schema(
@@ -20,6 +21,18 @@ const CategorySchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+const setImgUrl = (doc) => {
+  if (doc.img) {
+    doc.img = `${process.env.BASE_URL}/categories/${doc.img}`;
+  }
+};
+CategorySchema.post("init", (doc) => {
+  setImgUrl(doc);
+});
+CategorySchema.post("save", (doc) => {
+  setImgUrl(doc);
+});
 
 const CategoryModel = mongoose.model("Category", CategorySchema);
 

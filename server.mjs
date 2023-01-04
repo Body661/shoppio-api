@@ -1,6 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
+import { fileURLToPath } from "url";
+import path, { dirname } from "path";
+
 import dbConnect from "./config/db.mjs";
 import categoryRoutes from "./Routes/category.mjs";
 import subcategoryRoutes from "./Routes/subcategory.mjs";
@@ -15,10 +18,14 @@ dotenv.config({ path: "config.env" });
 const app = express();
 const { PORT } = process.env;
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 dbConnect();
 
 // Middleware
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "uploads")));
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));

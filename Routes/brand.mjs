@@ -4,6 +4,8 @@ import {
   deleteBrand,
   getBrand,
   getBrands,
+  uploadBrandImg,
+  imageProcessing,
   updateBrand,
 } from "../Controllers/brandRoutes.mjs";
 import {
@@ -17,13 +19,13 @@ const router = express.Router();
 
 router
   .route("/")
-  .post(...addBrandValidator, addBrand)
+  .post(uploadBrandImg, imageProcessing, ...addBrandValidator, addBrand)
   .get(getBrands);
 
 router
   .route("/:id")
   .get(...getBrandValidator, getBrand)
-  .put(...updateBrandValidator, updateBrand)
+  .put(uploadBrandImg, imageProcessing, ...updateBrandValidator, updateBrand)
   .delete(...deleteBrandValidator, deleteBrand);
 
 export default router;

@@ -30,7 +30,12 @@ router
 router
   .route("/:id")
   .get(...getCategoryValidator, getCategory)
-  .put(...updateCategoryValidator, updateCategory)
+  .put(
+    uploadCatImg,
+    imageProcessing,
+    ...updateCategoryValidator,
+    updateCategory
+  )
   .delete(...deleteCategoryValidator, deleteCategory);
 
 export default router;

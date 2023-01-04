@@ -26,6 +26,7 @@ export const getBrandValidator = [
 export const updateBrandValidator = [
   check("id").isMongoId().withMessage("Brand ID is not valid"),
   check("name")
+    .optional()
     .notEmpty()
     .withMessage("Brand name is required")
     .isLength({

@@ -1,5 +1,4 @@
 import { check } from "express-validator";
-import ApiError from "../../utils/apiError.mjs";
 import validatorMiddleware from "../../middlewares/validatorMiddleware.mjs";
 import UserModel from "../../models/userModel.mjs";
 
@@ -13,14 +12,29 @@ export const addUserValidator = [
     .custom(async (email) => {
       const user = await UserModel.findOne({ email });
       if (user) {
-        return Promise.reject(new ApiError("Email address is already in use"));
+        throw new Error("Email address is already in use");
       }
+
+      return true;
     }),
   check("password")
     .notEmpty()
     .withMessage("Password is required")
     .isStrongPassword()
     .withMessage("Password is not strong enough"),
+
+  check("passwordConfirm")
+    .notEmpty()
+    .withMessage("Password confirmation is required")
+    .custom(async (passwordConfirm, { req }) => {
+      const { password } = req.body;
+
+      if (passwordConfirm !== password) {
+        throw new Error("Passwords do not match");
+      }
+
+      return true;
+    }),
 
   check("phone")
     .optional()

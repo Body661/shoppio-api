@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import validator from "validator";
+import bcrypt from "bcryptjs";
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -30,7 +31,6 @@ const UserSchema = new mongoose.Schema({
     type: String,
     trim: true,
     required: [true, "Password is required"],
-    minlength: 8,
     validate: {
       validator: (value) => validator.isStrongPassword(value),
       message: "The password is not strong enough",
@@ -42,6 +42,13 @@ const UserSchema = new mongoose.Schema({
     enum: ["admin", "user"],
     default: "user",
   },
+});
+
+UserSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+
+  this.password = await bcrypt.hash(this.password, 12);
+  next();
 });
 
 const UserModel = mongoose.model("User", UserSchema);

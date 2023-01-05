@@ -10,6 +10,7 @@ import subcategoryRoutes from "./Routes/subcategory.mjs";
 import brandRoutes from "./Routes/brand.mjs";
 import productRoutes from "./Routes/product.mjs";
 import userRoutes from "./Routes/user.mjs";
+import authRoutes from "./Routes/auth.mjs";
 import ApiError from "./utils/apiError.mjs";
 import errorMiddleware from "./middlewares/errorMiddleware.mjs";
 
@@ -38,6 +39,7 @@ app.use("/api/subcategories", subcategoryRoutes);
 app.use("/api/brands", brandRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
 
 app.all("*", (req, res, next) => {
   next(new ApiError(`${req.originalUrl} is not a valid route`, 400));

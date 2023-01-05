@@ -1,6 +1,7 @@
 import { check } from "express-validator";
 import validatorMiddleware from "../../middlewares/validatorMiddleware.mjs";
 import UserModel from "../../models/userModel.mjs";
+import bcrypt from "bcryptjs";
 
 export const addUserValidator = [
   check("name").notEmpty().withMessage("User name is required"),
@@ -52,19 +53,13 @@ export const getUserValidator = [
 ];
 
 export const updateUserValidator = [
+  check("id").isMongoId().withMessage("User ID is not valid"),
   check("name").optional().notEmpty().withMessage("User name is required"),
   check("email")
     .optional()
     .notEmpty()
     .isEmail()
     .withMessage("Email address is not valid"),
-
-  check("password")
-    .optional()
-    .notEmpty()
-    .withMessage("Password is required")
-    .isStrongPassword()
-    .withMessage("Password is not strong enough"),
 
   check("phone")
     .optional()
@@ -77,5 +72,45 @@ export const updateUserValidator = [
 ];
 export const deleteUserValidator = [
   check("id").isMongoId().withMessage("User ID is not valid"),
+  validatorMiddleware,
+];
+export const updateUserPassValidator = [
+  check("id").isMongoId().withMessage("User ID is not valid"),
+
+  check("currentPassword")
+    .notEmpty()
+    .withMessage("Please enter your current password")
+    .custom(async (currPassword, { req }) => {
+      const user = await UserModel.findById(req.params.id);
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      if (!(await bcrypt.compare(currPassword, user.password))) {
+        throw new Error("Current password is incorrect");
+      }
+
+      return true;
+    }),
+
+  check("password")
+    .notEmpty()
+    .withMessage("Password is required")
+    .isStrongPassword()
+    .withMessage("Password is not strong enough"),
+
+  check("passwordConfirm")
+    .notEmpty()
+    .withMessage("Password confirmation is required")
+    .custom(async (passwordConfirm, { req }) => {
+      const { password } = req.body;
+
+      if (passwordConfirm !== password) {
+        throw new Error("Passwords do not match");
+      }
+
+      return true;
+    }),
   validatorMiddleware,
 ];

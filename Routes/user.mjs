@@ -5,11 +5,13 @@ import {
   getUser,
   getUsers,
   updateUser,
+  updateUserPassword,
 } from "../Controllers/userRoutes.mjs";
 import {
   addUserValidator,
   deleteUserValidator,
   getUserValidator,
+  updateUserPassValidator,
   updateUserValidator,
 } from "./validators/userValidators.mjs";
 
@@ -25,5 +27,11 @@ router
   .get(...getUserValidator, getUser)
   .put(...updateUserValidator, updateUser)
   .delete(...deleteUserValidator, deleteUser);
+
+router.put(
+  "/changePassword/:id",
+  ...updateUserPassValidator,
+  updateUserPassword
+);
 
 export default router;

@@ -1,31 +1,71 @@
-import userModel from "../models/userModel.mjs";
+import expressAsyncHandler from "express-async-handler";
+import bcrypt from "bcryptjs";
+import UserModel from "../models/userModel.mjs";
 import * as factory from "../utils/factoryHandler.mjs";
+import ApiError from "../utils/apiError.mjs";
 
 // @desc Create a new user
 // @route POST /api/users
 // @access Private
-export const addUser = factory.createDocument(userModel);
+export const addUser = factory.createDocument(UserModel);
 
 // @desc Get all users
 // @route GET /api/users
 // @access Private
-export const getUsers = factory.getAllDocuments(userModel);
+export const getUsers = factory.getAllDocuments(UserModel);
 
 // @desc Get specific user by id
 // @route GET /api/users/:id
 // @access Private
-export const getUser = factory.getDocument(userModel, "User not found");
+export const getUser = factory.getDocument(UserModel, "User not found");
 
 // @desc Update specific user by id
 // @route PUT /api/users/:id
 // @access Private
-export const updateUser = factory.updateDocument(userModel, "User not found");
+export const updateUser = expressAsyncHandler(async (req, res, next) => {
+  const document = await UserModel.findByIdAndUpdate(
+    req.params.id,
+    {
+      name: req.body.name,
+      email: req.body.email,
+      phone: req.body.phone,
+      role: req.body.role,
+    },
+    {
+      new: true,
+    }
+  );
+
+  if (!document) {
+    return next(new ApiError("User not found", 404));
+  }
+
+  res.status(200).json(document);
+});
+
+export const updateUserPassword = expressAsyncHandler(
+  async (req, res, next) => {
+    const user = await UserModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        password: await bcrypt.hash(req.body.password, 12),
+      },
+      { new: true }
+    );
+
+    if (!user) {
+      return next(new ApiError("User not found", 404));
+    }
+
+    res.status(200).json(user);
+  }
+);
 
 // @desc Update specific user by id
 // @route DELETE /api/users/:id
 // @access Private
 export const deleteUser = factory.deleteDocument(
-  userModel,
+  UserModel,
   "User not found",
   "User deleted successfully"
 );

@@ -18,13 +18,21 @@ import {
 
 import subcategoryRoutes from "./subcategory.mjs";
 
+import { auth } from "../Controllers/authController.mjs";
+
 const router = express.Router();
 
 router.use("/:categoryId/subcategories", subcategoryRoutes);
 
 router
   .route("/")
-  .post(uploadCatImg, imageProcessing, ...createCategoryValidator, addCategory)
+  .post(
+    auth,
+    uploadCatImg,
+    imageProcessing,
+    ...createCategoryValidator,
+    addCategory
+  )
   .get(getCategories);
 
 router

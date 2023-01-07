@@ -49,6 +49,7 @@ export const updateUserPassword = expressAsyncHandler(
       req.params.id,
       {
         password: await bcrypt.hash(req.body.password, 12),
+        passLastUpdate: Date.now(),
       },
       { new: true }
     );

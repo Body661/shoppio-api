@@ -36,6 +36,7 @@ const UserSchema = new mongoose.Schema({
       message: "The password is not strong enough",
     },
   },
+  passLastUpdate: Date,
   role: {
     type: String,
     trim: true,

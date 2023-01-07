@@ -1,7 +1,7 @@
 import { check } from "express-validator";
+import bcrypt from "bcryptjs";
 import validatorMiddleware from "../../middlewares/validatorMiddleware.mjs";
 import UserModel from "../../models/userModel.mjs";
-import bcrypt from "bcryptjs";
 
 export const addUserValidator = [
   check("name").notEmpty().withMessage("User name is required"),

@@ -1,9 +1,8 @@
 import { check } from "express-validator";
 import validatorMiddleware from "../../middlewares/validatorMiddleware.mjs";
 import UserModel from "../../models/userModel.mjs";
-import bcrypt from "bcryptjs";
 
-export const signupValidator = [
+export const signupValidators = [
   check("name").notEmpty().withMessage("User name is required"),
   check("email")
     .notEmpty()
@@ -47,70 +46,12 @@ export const signupValidator = [
   validatorMiddleware,
 ];
 
-export const getUserValidator = [
-  check("id").isMongoId().withMessage("User ID is not valid"),
-  validatorMiddleware,
-];
-
-export const updateUserValidator = [
-  check("id").isMongoId().withMessage("User ID is not valid"),
-  check("name").optional().notEmpty().withMessage("User name is required"),
+export const loginValidators = [
   check("email")
-    .optional()
     .notEmpty()
+    .withMessage("Email address is required")
     .isEmail()
     .withMessage("Email address is not valid"),
-
-  check("phone")
-    .optional()
-    .notEmpty()
-    .withMessage("Phone number is required")
-    .isMobilePhone("any")
-    .withMessage("Phone number is not valid"),
-
-  validatorMiddleware,
-];
-export const deleteUserValidator = [
-  check("id").isMongoId().withMessage("User ID is not valid"),
-  validatorMiddleware,
-];
-export const updateUserPassValidator = [
-  check("id").isMongoId().withMessage("User ID is not valid"),
-
-  check("currentPassword")
-    .notEmpty()
-    .withMessage("Please enter your current password")
-    .custom(async (currPassword, { req }) => {
-      const user = await UserModel.findById(req.params.id);
-
-      if (!user) {
-        throw new Error("User not found");
-      }
-
-      if (!(await bcrypt.compare(currPassword, user.password))) {
-        throw new Error("Current password is incorrect");
-      }
-
-      return true;
-    }),
-
-  check("password")
-    .notEmpty()
-    .withMessage("Password is required")
-    .isStrongPassword()
-    .withMessage("Password is not strong enough"),
-
-  check("passwordConfirm")
-    .notEmpty()
-    .withMessage("Password confirmation is required")
-    .custom(async (passwordConfirm, { req }) => {
-      const { password } = req.body;
-
-      if (passwordConfirm !== password) {
-        throw new Error("Passwords do not match");
-      }
-
-      return true;
-    }),
+  check("password").notEmpty().withMessage("Password is required"),
   validatorMiddleware,
 ];

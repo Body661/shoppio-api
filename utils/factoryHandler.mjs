@@ -4,9 +4,9 @@ import ApiFeatures from "./apiFeatures.mjs";
 
 export const createDocument = (Model) =>
   expressAsyncHandler(async (req, res, next) => {
-    const document = await Model.create(req.body);
+    const data = await Model.create(req.body);
 
-    res.status(201).json(document);
+    res.status(201).json(data);
   });
 
 export const getAllDocuments = (Model, modelName) =>
@@ -38,7 +38,7 @@ export const getDocument = (Model, err) =>
       return next(new ApiError(err, 404));
     }
 
-    res.status(200).json(doc);
+    res.status(200).json({ data: doc });
   });
 
 export const updateDocument = (Model, err) =>
@@ -51,7 +51,7 @@ export const updateDocument = (Model, err) =>
       return next(new ApiError(err, 404));
     }
 
-    res.status(200).json(document);
+    res.status(200).json({ data: document });
   });
 
 export const deleteDocument = (Model, err, message) =>

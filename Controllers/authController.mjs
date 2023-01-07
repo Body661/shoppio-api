@@ -24,6 +24,9 @@ export const signup = expressAsyncHandler(async (req, res) => {
   res.status(201).json({ data: user, token });
 });
 
+// @desc Login
+// @route POST /api/auth/login
+// @access Public
 export const login = expressAsyncHandler(async (req, res, next) => {
   const user = await UserModel.findOne({ email: req.body.email });
 

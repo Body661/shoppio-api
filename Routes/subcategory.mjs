@@ -14,18 +14,24 @@ import {
   getSubcategoryValidator,
   updateSubcategoryValidator,
 } from "./validators/subcategoryValidators.mjs";
+import { allowed, auth } from "../Controllers/authController.mjs";
 
 const router = express.Router({ mergeParams: true });
 
 router
   .route("/")
-  .post(...createSubcategoryValidator, addSubcategory)
+  .post(auth, allowed("admin"), ...createSubcategoryValidator, addSubcategory)
   .get(createFilterObj, getSubcategories);
 
 router
   .route("/:id")
-  .delete(...deleteSubcategoryValidator, deleteSubcategory)
+  .put(auth, allowed("admin"), ...updateSubcategoryValidator, updateSubcategory)
   .get(...getSubcategoryValidator, getSubcategory)
-  .put(...updateSubcategoryValidator, updateSubcategory);
+  .delete(
+    auth,
+    allowed("admin"),
+    ...deleteSubcategoryValidator,
+    deleteSubcategory
+  );
 
 export default router;

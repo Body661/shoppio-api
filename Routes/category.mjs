@@ -18,7 +18,7 @@ import {
 
 import subcategoryRoutes from "./subcategory.mjs";
 
-import { auth } from "../Controllers/authController.mjs";
+import { allowed, auth } from "../Controllers/authController.mjs";
 
 const router = express.Router();
 
@@ -28,6 +28,7 @@ router
   .route("/")
   .post(
     auth,
+    allowed("admin"),
     uploadCatImg,
     imageProcessing,
     ...createCategoryValidator,
@@ -39,11 +40,13 @@ router
   .route("/:id")
   .get(...getCategoryValidator, getCategory)
   .put(
+    auth,
+    allowed("admin"),
     uploadCatImg,
     imageProcessing,
     ...updateCategoryValidator,
     updateCategory
   )
-  .delete(...deleteCategoryValidator, deleteCategory);
+  .delete(auth, allowed("admin"), ...deleteCategoryValidator, deleteCategory);
 
 export default router;

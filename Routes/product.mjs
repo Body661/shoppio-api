@@ -14,12 +14,15 @@ import {
   getProductValidator,
   updateProductValidator,
 } from "./validators/productValidators.mjs";
+import { allowed, auth } from "../Controllers/authController.mjs";
 
 const router = express.Router();
 
 router
   .route("/")
   .post(
+    auth,
+    allowed("admin"),
     uploadProductImgs,
     imageProcessing,
     ...createProductValidator,
@@ -31,10 +34,12 @@ router
   .route("/:id")
   .get(...getProductValidator, getProduct)
   .put(
+    auth,
+    allowed("admin"),
     uploadProductImgs,
     imageProcessing,
     ...updateProductValidator,
     updateProduct
   )
-  .delete(...deleteProductValidator, deleteProduct);
+  .delete(auth, allowed("admin"), ...deleteProductValidator, deleteProduct);
 export default router;

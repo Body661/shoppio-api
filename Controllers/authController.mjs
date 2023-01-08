@@ -69,3 +69,11 @@ export const auth = expressAsyncHandler(async (req, res, next) => {
   req.user = user;
   next();
 });
+
+export const allowed = (...roles) =>
+  expressAsyncHandler(async (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(new ApiError("Access denied", 403));
+    }
+    next();
+  });

@@ -9,13 +9,15 @@ export const uploadCatImg = uploadSingle("img");
 export const imageProcessing = expressAsyncHandler(async (req, res, next) => {
   const filename = `category-${uuid()}-${Date.now()}.png`;
 
-  await sharp(req.file.buffer)
-    .resize(600, 600)
-    .toFormat("png")
-    .jpeg({ quality: 90 })
-    .toFile(`uploads/categories/${filename}`);
+  if (req.file) {
+    await sharp(req.file.buffer)
+      .resize(600, 600)
+      .toFormat("png")
+      .jpeg({ quality: 90 })
+      .toFile(`uploads/categories/${filename}`);
 
-  req.body.img = filename;
+    req.body.img = filename;
+  }
 
   next();
 });

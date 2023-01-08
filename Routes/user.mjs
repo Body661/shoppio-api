@@ -14,7 +14,11 @@ import {
   updateUserPassValidator,
   updateUserValidator,
 } from "./validators/userValidators.mjs";
-import { allowed, auth } from "../Controllers/authController.mjs";
+import {
+  allowed,
+  auth,
+  forgetPassword,
+} from "../Controllers/authController.mjs";
 
 const router = express.Router();
 

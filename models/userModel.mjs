@@ -37,6 +37,9 @@ const UserSchema = new mongoose.Schema({
     },
   },
   passLastUpdate: Date,
+  passResetCode: String,
+  passResetExpires: Date,
+  passResetVerified: Boolean,
   role: {
     type: String,
     trim: true,

@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import expressAsyncHandler from "express-async-handler";
 import jsonwebtoken from "jsonwebtoken";
@@ -70,6 +71,7 @@ export const auth = expressAsyncHandler(async (req, res, next) => {
   next();
 });
 
+//@desc check user permissions
 export const allowed = (...roles) =>
   expressAsyncHandler(async (req, res, next) => {
     if (!roles.includes(req.user.role)) {
@@ -77,3 +79,22 @@ export const allowed = (...roles) =>
     }
     next();
   });
+
+export const forgetPassword = expressAsyncHandler(async (req, res, next) => {
+  const user = await UserModel.findOne({ email: req.body.email });
+
+  if (!user) {
+    return next(new ApiError("Incorrect email", 404));
+  }
+
+  const hashedResetCode = crypto
+    .createHash("sha256")
+    .update(Math.floor(1000 + Math.random() * 9000).toString())
+    .digest("hex");
+
+  user.passResetCode = hashedResetCode;
+  user.passResetExpires = Date.now() + 15 * 60 * 1000;
+  user.passResetVerified = false;
+
+  await user.save();
+});

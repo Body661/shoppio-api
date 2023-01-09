@@ -161,7 +161,7 @@ export const verifyPassResetCode = expressAsyncHandler(
 );
 
 // @desc reset password
-// @route POST /api/auth/resetPassword
+// @route PUT /api/auth/resetPassword
 // @access Public
 export const resetPassword = expressAsyncHandler(async (req, res, next) => {
   const user = await UserModel.findOne({ email: req.body.email });

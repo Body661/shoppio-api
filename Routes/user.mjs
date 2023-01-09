@@ -1,6 +1,7 @@
 import express from "express";
 import {
   addUser,
+  deleteMe,
   deleteUser,
   getMe,
   getUser,
@@ -29,7 +30,8 @@ router.use(auth);
 router
   .route("/me")
   .get(allowed("user"), getMe, getUser)
-  .put(allowed("user"), ...updateMeValidator, updateMe);
+  .put(allowed("user"), ...updateMeValidator, updateMe)
+  .delete(allowed("user"), deleteMe);
 
 router.put(
   "/updateMyPassword",

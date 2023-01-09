@@ -83,7 +83,7 @@ export const getMe = expressAsyncHandler(async (req, res, next) => {
 // @desc Update logged-in user password
 // @route PUT /api/users/myPassword
 // @access Private
-export const updateMyPass = expressAsyncHandler(async (req, res, next) => {
+export const updateMyPass = expressAsyncHandler(async (req, res) => {
   await UserModel.findByIdAndUpdate(
     req.user._id,
     {
@@ -101,7 +101,7 @@ export const updateMyPass = expressAsyncHandler(async (req, res, next) => {
 // @desc Update logged-in user data
 // @route PUT /api/users/me
 // @access Private
-export const updateMe = expressAsyncHandler(async (req, res, next) => {
+export const updateMe = expressAsyncHandler(async (req, res) => {
   const document = await UserModel.findByIdAndUpdate(
     req.user._id,
     {
@@ -115,4 +115,12 @@ export const updateMe = expressAsyncHandler(async (req, res, next) => {
   );
 
   res.status(200).json(document);
+});
+
+// @desc delete logged-in user
+// @route DELETE /api/users/me
+// @access Private
+export const deleteMe = expressAsyncHandler(async (req, res) => {
+  await UserModel.findByIdAndDelete(req.user._id);
+  res.status(204).send();
 });

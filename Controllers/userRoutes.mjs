@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import UserModel from "../models/userModel.mjs";
 import * as factory from "../utils/factoryHandler.mjs";
 import ApiError from "../utils/apiError.mjs";
+import signToken from "../utils/signJWT.mjs";
 
 // @desc Create a new user
 // @route POST /api/users
@@ -71,10 +72,47 @@ export const deleteUser = factory.deleteDocument(
   "User deleted successfully"
 );
 
-// @desc Get users data
+// @desc Get logged in user data
 // @route GET /api/users/me
 // @access Private
 export const getMe = expressAsyncHandler(async (req, res, next) => {
   req.params.id = req.user._id;
   next();
+});
+
+// @desc Update logged-in user password
+// @route PUT /api/users/myPassword
+// @access Private
+export const updateMyPass = expressAsyncHandler(async (req, res, next) => {
+  await UserModel.findByIdAndUpdate(
+    req.user._id,
+    {
+      password: await bcrypt.hash(req.body.password, 12),
+      passLastUpdate: Date.now(),
+    },
+    { new: true }
+  );
+
+  const token = signToken(req.user._id);
+
+  res.status(200).json({ token });
+});
+
+// @desc Update logged-in user data
+// @route PUT /api/users/me
+// @access Private
+export const updateMe = expressAsyncHandler(async (req, res, next) => {
+  const document = await UserModel.findByIdAndUpdate(
+    req.user._id,
+    {
+      name: req.body.name,
+      email: req.body.email,
+      phone: req.body.phone,
+    },
+    {
+      new: true,
+    }
+  );
+
+  res.status(200).json(document);
 });

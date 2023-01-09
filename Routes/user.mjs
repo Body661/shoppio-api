@@ -5,6 +5,8 @@ import {
   getMe,
   getUser,
   getUsers,
+  updateMe,
+  updateMyPass,
   updateUser,
   updateUserPassword,
 } from "../Controllers/userRoutes.mjs";
@@ -12,20 +14,32 @@ import {
   addUserValidator,
   deleteUserValidator,
   getUserValidator,
+  updateMeValidator,
+  updateMyPassValidator,
   updateUserPassValidator,
   updateUserValidator,
 } from "./validators/userValidators.mjs";
-import {
-  allowed,
-  auth,
-  forgetPassword,
-} from "../Controllers/authController.mjs";
+import { allowed, auth } from "../Controllers/authController.mjs";
 
 const router = express.Router();
 
-router.route("/me").get(auth, allowed("user"), getMe, getUser);
+router.use(auth);
 
-router.use(auth, allowed("admin"));
+// User routes
+router
+  .route("/me")
+  .get(allowed("user"), getMe, getUser)
+  .put(allowed("user"), ...updateMeValidator, updateMe);
+
+router.put(
+  "/updateMyPassword",
+  allowed("user"),
+  ...updateMyPassValidator,
+  updateMyPass
+);
+
+// Admin routes
+router.use(allowed("admin"));
 
 router
   .route("/")
@@ -40,8 +54,6 @@ router
 
 router.put(
   "/changePassword/:id",
-  auth,
-  allowed("user", "admin"),
   ...updateUserPassValidator,
   updateUserPassword
 );

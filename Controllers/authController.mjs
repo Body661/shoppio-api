@@ -5,11 +5,7 @@ import jsonwebtoken from "jsonwebtoken";
 import UserModel from "../models/userModel.mjs";
 import ApiError from "../utils/apiError.mjs";
 import sendEmail from "../utils/sendEmail.mjs";
-
-const signToken = (userId) =>
-  jsonwebtoken.sign({ userId }, process.env.SECRET_KEY, {
-    expiresIn: "2h",
-  });
+import signToken from "../utils/signJWT.mjs";
 
 // @desc Signup
 // @route POST /api/auth/signup

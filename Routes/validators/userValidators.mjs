@@ -59,7 +59,16 @@ export const updateUserValidator = [
     .optional()
     .notEmpty()
     .isEmail()
-    .withMessage("Email address is not valid"),
+    .withMessage("Email address is not valid")
+    .custom(async (email) => {
+      const user = UserModel.findOne({ email: email });
+
+      if (user) {
+        throw new Error("Email address already in use");
+      }
+
+      return true;
+    }),
 
   check("phone")
     .optional()
@@ -112,5 +121,54 @@ export const updateUserPassValidator = [
 
       return true;
     }),
+  validatorMiddleware,
+];
+
+export const updateMyPassValidator = [
+  check("password")
+    .notEmpty()
+    .withMessage("Password is required")
+    .isStrongPassword()
+    .withMessage("Password is not strong enough"),
+
+  check("passwordConfirm")
+    .notEmpty()
+    .withMessage("Password confirmation is required")
+    .custom(async (passwordConfirm, { req }) => {
+      const { password } = req.body;
+
+      if (passwordConfirm !== password) {
+        throw new Error("Passwords do not match");
+      }
+
+      return true;
+    }),
+  validatorMiddleware,
+];
+
+export const updateMeValidator = [
+  check("name").optional().notEmpty().withMessage("User name is required"),
+  check("email")
+    .optional()
+    .notEmpty()
+    .isEmail()
+    .withMessage("Email address is not valid")
+    .custom(async (email) => {
+      const user = UserModel.findOne({ email: email });
+
+      if (user) {
+        throw new Error("Email address already in use");
+      }
+
+      return true;
+    }),
+
+  check("phone")
+    .optional()
+    .notEmpty()
+    .withMessage("Phone number is required")
+    .isMobilePhone("any")
+    .withMessage("Phone number is not valid"),
+
   validatorMiddleware,
 ];

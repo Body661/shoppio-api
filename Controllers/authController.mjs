@@ -4,6 +4,7 @@ import expressAsyncHandler from "express-async-handler";
 import jsonwebtoken from "jsonwebtoken";
 import UserModel from "../models/userModel.mjs";
 import ApiError from "../utils/apiError.mjs";
+import sendEmail from "../utils/sendEmail.mjs";
 
 const signToken = (userId) =>
   jsonwebtoken.sign({ userId }, process.env.SECRET_KEY, {
@@ -22,6 +23,19 @@ export const signup = expressAsyncHandler(async (req, res) => {
   });
 
   const token = signToken(user._id);
+
+  sendEmail({
+    email: user.email,
+    subject: "Welcome on board!",
+    template: "welcoming",
+    context: {
+      name: user.name,
+      action_url: "www.google.com",
+      support_email: "examen.project.ecommerce@gmail.com",
+      help_url: "www.google.com",
+    },
+  });
+
   res.status(201).json({ data: user, token });
 });
 
@@ -80,6 +94,9 @@ export const allowed = (...roles) =>
     next();
   });
 
+// @desc forget password
+// @route POST /api/auth/forgetPassword
+// @access Public
 export const forgetPassword = expressAsyncHandler(async (req, res, next) => {
   const user = await UserModel.findOne({ email: req.body.email });
 
@@ -87,9 +104,10 @@ export const forgetPassword = expressAsyncHandler(async (req, res, next) => {
     return next(new ApiError("Incorrect email", 404));
   }
 
+  const code = Math.floor(100000 + Math.random() * 900000).toString();
   const hashedResetCode = crypto
     .createHash("sha256")
-    .update(Math.floor(1000 + Math.random() * 9000).toString())
+    .update(code)
     .digest("hex");
 
   user.passResetCode = hashedResetCode;
@@ -97,4 +115,78 @@ export const forgetPassword = expressAsyncHandler(async (req, res, next) => {
   user.passResetVerified = false;
 
   await user.save();
+
+  try {
+    sendEmail({
+      email: user.email,
+      subject: "Password reset code",
+      template: "resetPass",
+      context: { name: user.name, code },
+    });
+  } catch (e) {
+    user.passResetCode = undefined;
+    user.passResetExpires = undefined;
+    user.passResetVerified = undefined;
+    await user.save();
+    return next(new ApiError("Error while sending email", 500));
+  }
+
+  res.status(200).json({ message: "Reset code sent successfully" });
+});
+
+// @desc verify password reset code
+// @route POST /api/auth/verifyPassResetCode
+// @access Public
+export const verifyPassResetCode = expressAsyncHandler(
+  async (req, res, next) => {
+    const hashedResetCode = crypto
+      .createHash("sha256")
+      .update(req.body.code)
+      .digest("hex");
+
+    const user = await UserModel.findOne({
+      passResetCode: hashedResetCode,
+      passResetExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return next(new ApiError("Code is invalid or expired", 403));
+    }
+
+    user.passResetVerified = true;
+    await user.save();
+
+    res.status(200).send();
+  }
+);
+
+// @desc reset password
+// @route POST /api/auth/resetPassword
+// @access Public
+export const resetPassword = expressAsyncHandler(async (req, res, next) => {
+  const user = await UserModel.findOne({ email: req.body.email });
+
+  if (!user) {
+    return next(new ApiError("Incorrect email", 404));
+  }
+
+  if (!user.passResetVerified) {
+    return next(new ApiError("Reset code not verified", 400));
+  }
+
+  user.password = req.body.password;
+  user.passResetCode = undefined;
+  user.passResetExpires = undefined;
+  user.passResetVerified = undefined;
+  await user.save();
+
+  sendEmail({
+    email: user.email,
+    subject: "Password changed",
+    template: "passChanged",
+    context: { name: user.name },
+  });
+
+  const token = signToken(user._id);
+  res.status(200).json({ message: "Password changed successfully", token });
 });

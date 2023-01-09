@@ -7,22 +7,22 @@ import signToken from "../utils/signJWT.mjs";
 
 // @desc Create a new user
 // @route POST /api/users
-// @access Private
+// @access Private/Protected [Admin]
 export const addUser = factory.createDocument(UserModel);
 
 // @desc Get all users
 // @route GET /api/users
-// @access Private
+// @access Private/Protected [Admin]
 export const getUsers = factory.getAllDocuments(UserModel);
 
 // @desc Get specific user by id
 // @route GET /api/users/:id
-// @access Private
+// @access Private/Protected [Admin]
 export const getUser = factory.getDocument(UserModel, "User not found");
 
 // @desc Update specific user by id
 // @route PUT /api/users/:id
-// @access Private
+// @access Private/Protected [Admin]
 export const updateUser = expressAsyncHandler(async (req, res, next) => {
   const document = await UserModel.findByIdAndUpdate(
     req.params.id,
@@ -44,6 +44,9 @@ export const updateUser = expressAsyncHandler(async (req, res, next) => {
   res.status(200).json(document);
 });
 
+// @desc Update user password by id
+// @route PUT /api/users/changePassword/:id
+// @access Private/Protected [Admin]
 export const updateUserPassword = expressAsyncHandler(
   async (req, res, next) => {
     const user = await UserModel.findByIdAndUpdate(
@@ -63,18 +66,22 @@ export const updateUserPassword = expressAsyncHandler(
   }
 );
 
-// @desc Update specific user by id
+// @desc delete specific user by id
 // @route DELETE /api/users/:id
-// @access Private
+// @access Private/Protected [Admin]
 export const deleteUser = factory.deleteDocument(
   UserModel,
   "User not found",
   "User deleted successfully"
 );
 
-// @desc Get logged in user data
+// --------------//
+// USER ROUTES //
+// --------------//
+
+// @desc Get logged-in user data
 // @route GET /api/users/me
-// @access Private
+// @access Private/Protected [User]
 export const getMe = expressAsyncHandler(async (req, res, next) => {
   req.params.id = req.user._id;
   next();
@@ -82,7 +89,7 @@ export const getMe = expressAsyncHandler(async (req, res, next) => {
 
 // @desc Update logged-in user password
 // @route PUT /api/users/myPassword
-// @access Private
+// @access Private/Protected [User]
 export const updateMyPass = expressAsyncHandler(async (req, res) => {
   await UserModel.findByIdAndUpdate(
     req.user._id,
@@ -100,7 +107,7 @@ export const updateMyPass = expressAsyncHandler(async (req, res) => {
 
 // @desc Update logged-in user data
 // @route PUT /api/users/me
-// @access Private
+// @access Private/Protected [User]
 export const updateMe = expressAsyncHandler(async (req, res) => {
   const document = await UserModel.findByIdAndUpdate(
     req.user._id,
@@ -119,7 +126,7 @@ export const updateMe = expressAsyncHandler(async (req, res) => {
 
 // @desc delete logged-in user
 // @route DELETE /api/users/me
-// @access Private
+// @access Private/Protected [User]
 export const deleteMe = expressAsyncHandler(async (req, res) => {
   await UserModel.findByIdAndDelete(req.user._id);
   res.status(204).send();

@@ -24,7 +24,7 @@ export const imageProcessing = expressAsyncHandler(async (req, res, next) => {
 
 // @desc Create a new category
 // @route POST /api/categories
-// @access Private
+// @access Private/Protected [Admin]
 export const addCategory = factory.createDocument(CategoryModel);
 
 // @desc Get all categories
@@ -42,7 +42,7 @@ export const getCategory = factory.getDocument(
 
 // @desc Update a category
 // @route GET /api/categories/:id
-// @access Private
+// @access Private/Protected [Admin]
 export const updateCategory = factory.updateDocument(
   CategoryModel,
   "Category not found"
@@ -50,7 +50,7 @@ export const updateCategory = factory.updateDocument(
 
 // @desc Delete a category
 // @route DELETE /categories/:id
-// @access Private
+// @access Private/Protected [Admin]
 export const deleteCategory = factory.deleteDocument(
   CategoryModel,
   "Category not found",

@@ -49,6 +49,7 @@ export const login = expressAsyncHandler(async (req, res, next) => {
   res.status(200).json({ data: user, token });
 });
 
+// @desc Auth middleware responsible for checking if the user is authenticated or not
 export const auth = expressAsyncHandler(async (req, res, next) => {
   let token;
   if (

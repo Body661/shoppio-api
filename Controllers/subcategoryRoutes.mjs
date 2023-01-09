@@ -32,7 +32,7 @@ export const getSubcategory = factory.getDocument(
 
 // @desc Update a subcategories
 // @route PUT /api/subcategories/:id
-// @access Private
+// @access Private/Protected [Admin]
 export const updateSubcategory = factory.updateDocument(
   SubcategoryModel,
   "Subcategory not found"
@@ -40,7 +40,7 @@ export const updateSubcategory = factory.updateDocument(
 
 // @desc Delete a subcategories
 // @route DELETE /api/subcategories/:id
-// @access Private
+// @access Private/Protected [Admin]
 export const deleteSubcategory = factory.deleteDocument(
   SubcategoryModel,
   "Subcategory not found",

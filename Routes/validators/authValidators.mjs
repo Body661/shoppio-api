@@ -55,3 +55,55 @@ export const loginValidators = [
   check("password").notEmpty().withMessage("Password is required"),
   validatorMiddleware,
 ];
+
+export const forgotPasswordValidators = [
+  check("email")
+    .notEmpty()
+    .withMessage("Email address is required")
+    .isEmail()
+    .withMessage("Email address is not valid")
+    .custom(async (email) => {
+      const user = await UserModel.findOne({ email });
+      if (!user) {
+        throw new Error("Incorrect email");
+      }
+
+      return true;
+    }),
+  validatorMiddleware,
+];
+
+export const verfiyPassResetCodeValidators = [
+  check("code")
+    .notEmpty()
+    .withMessage("Reset code is required")
+    .isLength({ min: 6, max: 6 })
+    .withMessage("Reset code must be 6 characters long"),
+  validatorMiddleware,
+];
+
+export const resetPasswordValidators = [
+  check("email")
+    .notEmpty()
+    .withMessage("Email address is required")
+    .isEmail()
+    .withMessage("Email address is not valid")
+    .custom(async (email) => {
+      const user = await UserModel.findOne({ email });
+      if (!user) {
+        throw new Error("Incorrect email");
+      }
+
+      if (!user.passResetVerified) {
+        throw new Error("Reset code not verified");
+      }
+
+      return true;
+    }),
+  check("password")
+    .notEmpty()
+    .withMessage("New password is required")
+    .isStrongPassword()
+    .withMessage("Password is not strong enough"),
+  validatorMiddleware,
+];

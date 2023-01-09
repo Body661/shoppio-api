@@ -45,7 +45,7 @@ export const imageProcessing = expressAsyncHandler(async (req, res, next) => {
 
 //@desc Create new product
 //@route POST /api/products
-//@access Private
+//@access Private/Protected [Admin]
 export const addProduct = factory.createDocument(ProductModel);
 
 // @desc Get a list of all products
@@ -61,6 +61,9 @@ export const getProduct = factory.getDocument(
   "Product not found"
 );
 
+// @desc update a product
+// @route PUT /api/products/:id
+// @access Private/Protected [Admin]
 export const updateProduct = factory.updateDocument(
   ProductModel,
   "Product not found"
@@ -68,7 +71,7 @@ export const updateProduct = factory.updateDocument(
 
 // @desc delete a product
 // @route DELETE /api/products/:id
-// @access Private
+// @access Private/Protected [Admin]
 export const deleteProduct = factory.deleteDocument(
   ProductModel,
   "Product not found",

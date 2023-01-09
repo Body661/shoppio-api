@@ -23,7 +23,7 @@ export const imageProcessing = expressAsyncHandler(async (req, res, next) => {
 
 // @desc Create a new brand
 // @route POST /api/brands
-// @access Private
+// @access Private/Protected [Admin]
 export const addBrand = factory.createDocument(BrandModel);
 
 // @desc Get all brands
@@ -38,7 +38,7 @@ export const getBrand = factory.getDocument(BrandModel, "Brand not found");
 
 // @desc Update a brand
 // @route PUT /api/brands/:id
-// @access Private
+// @access Private/Protected [Admin]
 export const updateBrand = factory.updateDocument(
   BrandModel,
   "Brand not found"
@@ -46,7 +46,7 @@ export const updateBrand = factory.updateDocument(
 
 // @desc Delete a brand
 // @route DELETE /api/brands/:id
-// @access Private
+// @access Private/Protected [Admin]
 export const deleteBrand = factory.deleteDocument(
   BrandModel,
   "Brand not found",

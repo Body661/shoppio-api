@@ -70,3 +70,11 @@ export const deleteUser = factory.deleteDocument(
   "User not found",
   "User deleted successfully"
 );
+
+// @desc Get users data
+// @route GET /api/users/me
+// @access Private
+export const getMe = expressAsyncHandler(async (req, res, next) => {
+  req.params.id = req.user._id;
+  next();
+});

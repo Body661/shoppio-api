@@ -2,6 +2,7 @@ import express from "express";
 import {
   addUser,
   deleteUser,
+  getMe,
   getUser,
   getUsers,
   updateUser,
@@ -22,16 +23,20 @@ import {
 
 const router = express.Router();
 
+router.route("/me").get(auth, allowed("user"), getMe, getUser);
+
+router.use(auth, allowed("admin"));
+
 router
   .route("/")
-  .post(auth, allowed("admin"), ...addUserValidator, addUser)
-  .get(auth, allowed("admin"), getUsers);
+  .post(...addUserValidator, addUser)
+  .get(getUsers);
 
 router
   .route("/:id")
-  .get(auth, allowed("admin"), ...getUserValidator, getUser)
-  .put(auth, allowed("admin"), ...updateUserValidator, updateUser)
-  .delete(auth, allowed("admin"), ...deleteUserValidator, deleteUser);
+  .get(...getUserValidator, getUser)
+  .put(...updateUserValidator, updateUser)
+  .delete(...deleteUserValidator, deleteUser);
 
 router.put(
   "/changePassword/:id",

@@ -35,12 +35,6 @@ const UserSchema = new mongoose.Schema({
       validator: (value) => validator.isStrongPassword(value),
       message: "The password is not strong enough",
     },
-    wishlist: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: "Product",
-      },
-    ],
   },
   passLastUpdate: Date,
   passResetCode: String,
@@ -52,6 +46,12 @@ const UserSchema = new mongoose.Schema({
     enum: ["admin", "user"],
     default: "user",
   },
+  wishlist: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "Product",
+    },
+  ],
 });
 
 UserSchema.pre("save", async function (next) {

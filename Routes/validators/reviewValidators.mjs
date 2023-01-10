@@ -1,7 +1,6 @@
 import { check } from "express-validator";
-import UserModel from "../../models/userModel.mjs";
 import validatorMiddleware from "../../middlewares/validatorMiddleware.mjs";
-import ProductModel from "../../models/productModel.mjs";
+import ReviewModel from "../../models/reviewModel.mjs";
 
 export const addReviewValidator = [
   check("title")
@@ -25,24 +24,18 @@ export const addReviewValidator = [
     .withMessage("Review ratings must be a number")
     .isFloat({ min: 1, max: 5 })
     .withMessage("Review ratings must be between 1 and 5"),
-  check("user")
-    .isMongoId()
-    .withMessage("invalid user id")
-    .custom(async (id) => {
-      const user = await UserModel.findById(id);
-      if (!user) {
-        throw new Error("invalid user id");
-      }
-
-      return true;
-    }),
+  check("user").isMongoId().withMessage("invalid user id"),
   check("product")
     .isMongoId()
     .withMessage("invalid product id")
-    .custom(async (id) => {
-      const product = await ProductModel.findById(id);
-      if (!product) {
-        throw new Error("No product found");
+    .custom(async (id, { req }) => {
+      const review = await ReviewModel.findOne({
+        user: req.user._id,
+        product: id,
+      });
+
+      if (review) {
+        throw new Error("You have already reviewed");
       }
 
       return true;
@@ -84,28 +77,12 @@ export const updateReviewValidator = [
     .notEmpty()
     .withMessage("Review must belong to a user")
     .isMongoId()
-    .withMessage("invalid user id")
-    .custom(async (id) => {
-      const user = await UserModel.findById(id);
-      if (!user) {
-        throw new Error("invalid user id");
-      }
-
-      return true;
-    }),
+    .withMessage("invalid user id"),
   check("product")
     .notEmpty()
     .withMessage("Review must belong to a product")
     .isMongoId()
-    .withMessage("invalid product id")
-    .custom(async (id) => {
-      const product = await ProductModel.findById(id);
-      if (!product) {
-        throw new Error("No product found");
-      }
-
-      return true;
-    }),
+    .withMessage("invalid product id"),
   validatorMiddleware,
 ];
 

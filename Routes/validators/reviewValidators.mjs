@@ -49,6 +49,22 @@ export const getReviewValidator = [
 ];
 
 export const updateReviewValidator = [
+  check("id")
+    .isMongoId()
+    .withMessage("review ID is not valid")
+    .custom(async (val, { req }) => {
+      const review = await ReviewModel.findById(val);
+
+      if (!review) {
+        throw new Error("Review not found");
+      }
+
+      if (review.user.toString() !== req.user._id.toString()) {
+        throw new Error("You are not allowed to update this review");
+      }
+
+      return true;
+    }),
   check("title")
     .optional()
     .notEmpty()
@@ -87,6 +103,23 @@ export const updateReviewValidator = [
 ];
 
 export const deleteReviewValidator = [
-  check("id").isMongoId().withMessage("review ID is not valid"),
+  check("id")
+    .isMongoId()
+    .withMessage("review ID is not valid")
+    .custom(async (val, { req }) => {
+      const review = await ReviewModel.findById(val);
+
+      if (!review) {
+        throw new Error("Review not found");
+      }
+
+      if (req.user.role === "user") {
+        if (review.user.toString() !== req.user._id.toString()) {
+          throw new Error("You are not allowed to delete this review");
+        }
+      }
+
+      return true;
+    }),
   validatorMiddleware,
 ];

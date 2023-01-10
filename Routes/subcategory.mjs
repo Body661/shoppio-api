@@ -6,7 +6,7 @@ import {
   getSubcategories,
   getSubcategory,
   updateSubcategory,
-} from "../Controllers/subcategoryRoutes.mjs";
+} from "../Controllers/subcategoryControllers.mjs";
 
 import {
   createSubcategoryValidator,

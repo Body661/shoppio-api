@@ -10,7 +10,7 @@ import {
   updateMyPass,
   updateUser,
   updateUserPassword,
-} from "../Controllers/userRoutes.mjs";
+} from "../Controllers/userControllers.mjs";
 import {
   addUserValidator,
   deleteUserValidator,

@@ -7,7 +7,7 @@ import {
   imageProcessing,
   updateProduct,
   uploadProductImgs,
-} from "../Controllers/productRoutes.mjs";
+} from "../Controllers/productControllers.mjs";
 import {
   createProductValidator,
   deleteProductValidator,

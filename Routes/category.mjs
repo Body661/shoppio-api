@@ -7,7 +7,7 @@ import {
   imageProcessing,
   updateCategory,
   uploadCatImg,
-} from "../Controllers/categoryRoutes.mjs";
+} from "../Controllers/categoryControllers.mjs";
 
 import {
   createCategoryValidator,

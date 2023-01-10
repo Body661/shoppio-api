@@ -7,7 +7,7 @@ import {
   uploadBrandImg,
   imageProcessing,
   updateBrand,
-} from "../Controllers/brandRoutes.mjs";
+} from "../Controllers/brandControllers.mjs";
 import {
   addBrandValidator,
   deleteBrandValidator,

@@ -7,7 +7,7 @@ import {
   updateReview,
   createFilterObj,
   setProdIdAndUser,
-} from "../Controllers/reviewRoutes.mjs";
+} from "../Controllers/reviewControllers.mjs";
 
 import { allowed, auth } from "../Controllers/authController.mjs";
 import {

@@ -59,7 +59,7 @@ export const updateReviewValidator = [
         throw new Error("Review not found");
       }
 
-      if (review.user.toString() !== req.user._id.toString()) {
+      if (review.user._id.toString() !== req.user._id.toString()) {
         throw new Error("You are not allowed to update this review");
       }
 

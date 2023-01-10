@@ -32,7 +32,7 @@ export const removeFromWishlist = expressAsyncHandler(async (req, res) => {
   );
 
   res.status(200).json({
-    message: "Product added successfully to wishlist",
+    message: "Product removed successfully from your wishlist",
     data: user.wishlist,
   });
 });

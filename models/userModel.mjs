@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
+import { string } from "sharp/lib/is.js";
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -50,6 +51,19 @@ const UserSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.ObjectId,
       ref: "Product",
+    },
+  ],
+  addresses: [
+    {
+      id: {
+        type: mongoose.Schema.Types.ObjectId,
+      },
+      alias: String,
+      street: String,
+      postalCode: String,
+      phone: String,
+      city: String,
+      country: String,
     },
   ],
 });

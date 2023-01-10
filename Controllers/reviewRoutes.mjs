@@ -1,10 +1,23 @@
 import ReviewModel from "../models/reviewModel.mjs";
 import * as factory from "../utils/factoryHandler.mjs";
 
+export const setProdIdAndUser = (req, res, next) => {
+  if (!req.body.product) req.body.product = req.params.productId;
+  if (!req.body.user) req.body.user = req.user._id;
+  next();
+};
+
 // @desc Create a new review
 // @route POST /api/:id/reviews
 // @access Private/Protected [User]
 export const addReview = factory.createDocument(ReviewModel);
+
+export const createFilterObj = (req, res, next) => {
+  let filter = {};
+  if (req.params.productId) filter = { product: req.params.productId };
+  req.filterObj = filter;
+  next();
+};
 
 // @desc Get all reviews
 // @route GET /api/reviews

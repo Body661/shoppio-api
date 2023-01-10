@@ -5,6 +5,8 @@ import {
   getReviews,
   getReview,
   updateReview,
+  createFilterObj,
+  setProdIdAndUser,
 } from "../Controllers/reviewRoutes.mjs";
 
 import { allowed, auth } from "../Controllers/authController.mjs";
@@ -15,17 +17,29 @@ import {
   updateReviewValidator,
 } from "./validators/reviewValidators.mjs";
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router
   .route("/")
-  .post(auth, allowed("user"), ...addReviewValidator, addReview)
-  .get(getReviews);
+  .post(
+    auth,
+    allowed("user"),
+    setProdIdAndUser,
+    ...addReviewValidator,
+    addReview
+  )
+  .get(createFilterObj, getReviews);
 
 router
   .route("/:id")
   .get(...getReviewValidator, getReview)
-  .put(auth, allowed("user"), ...updateReviewValidator, updateReview)
+  .put(
+    auth,
+    allowed("user"),
+    setProdIdAndUser,
+    ...updateReviewValidator,
+    updateReview
+  )
   .delete(
     auth,
     allowed("admin", "user"),

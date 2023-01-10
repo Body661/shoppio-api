@@ -19,7 +19,6 @@ export const createSubcategoryValidator = [
     .withMessage("Category ID is not valid")
     .custom((value, { req }) => {
       req.body.category = value;
-      console.log(value);
       return true;
     }),
   validatorMiddleware,

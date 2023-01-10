@@ -25,7 +25,7 @@ export const addReviewValidator = [
     .isFloat({ min: 1, max: 5 })
     .withMessage("Review ratings must be between 1 and 5"),
   check("user").isMongoId().withMessage("invalid user id"),
-  check("product")
+  check("productId")
     .isMongoId()
     .withMessage("invalid product id")
     .custom(async (id, { req }) => {
@@ -114,7 +114,7 @@ export const deleteReviewValidator = [
       }
 
       if (req.user.role === "user") {
-        if (review.user.toString() !== req.user._id.toString()) {
+        if (review.user._id.toString() !== req.user._id.toString()) {
           throw new Error("You are not allowed to delete this review");
         }
       }

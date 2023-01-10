@@ -55,6 +55,7 @@ export const updateDocument = (Model, err) =>
       return next(new ApiError(err, 404));
     }
 
+    document.save();
     res.status(200).json({ data: document });
   });
 
@@ -65,6 +66,6 @@ export const deleteDocument = (Model, err, message) =>
     if (!doc) {
       return next(new ApiError(err, 404));
     }
-
+    doc.remove();
     res.status(200).json({ message });
   });

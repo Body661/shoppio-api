@@ -15,8 +15,11 @@ import {
   updateProductValidator,
 } from "./validators/productValidators.mjs";
 import { allowed, auth } from "../Controllers/authController.mjs";
+import reviewRoutes from "./review.mjs";
 
 const router = express.Router();
+
+router.use("/:productId/reviews", reviewRoutes);
 
 router
   .route("/")

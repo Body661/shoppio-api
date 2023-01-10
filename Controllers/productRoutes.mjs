@@ -58,7 +58,8 @@ export const getProducts = factory.getAllDocuments(ProductModel, "Products");
 // @access Public
 export const getProduct = factory.getDocument(
   ProductModel,
-  "Product not found"
+  "Product not found",
+  "reviews"
 );
 
 // @desc update a product

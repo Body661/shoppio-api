@@ -30,9 +30,13 @@ export const getAllDocuments = (Model, modelName) =>
     res.status(200).json({ amount: docs.length, paginationRes, data: docs });
   });
 
-export const getDocument = (Model, err) =>
+export const getDocument = (Model, err, populationOpts) =>
   expressAsyncHandler(async (req, res, next) => {
-    const doc = await Model.findById(req.params.id);
+    const query = Model.findById(req.params.id);
+
+    if (populationOpts) query.populate(populationOpts);
+
+    const doc = await query;
 
     if (!doc) {
       return next(new ApiError(err, 404));

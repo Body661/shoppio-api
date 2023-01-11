@@ -5,18 +5,9 @@ import { fileURLToPath } from "url";
 import path, { dirname } from "path";
 
 import dbConnect from "./config/db.mjs";
-import categoryRoutes from "./Routes/category.mjs";
-import subcategoryRoutes from "./Routes/subcategory.mjs";
-import brandRoutes from "./Routes/brand.mjs";
-import productRoutes from "./Routes/product.mjs";
-import userRoutes from "./Routes/user.mjs";
-import authRoutes from "./Routes/auth.mjs";
-import reviewRoutes from "./Routes/review.mjs";
-import wishlistRoutes from "./Routes/wishlist.mjs";
-import addressRoutes from "./Routes/adress.mjs";
-import couponRoutes from "./Routes/coupon.mjs";
 import ApiError from "./utils/apiError.mjs";
 import errorMiddleware from "./middlewares/errorMiddleware.mjs";
+import mountRoutes from "./Routes/index.mjs";
 
 dotenv.config({ path: "config.env" });
 
@@ -37,18 +28,7 @@ if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-// Mount Routes
-app.use("/api/categories", categoryRoutes);
-app.use("/api/subcategories", subcategoryRoutes);
-app.use("/api/brands", brandRoutes);
-app.use("/api/products", productRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/auth", authRoutes);
-app.use("/api/reviews", reviewRoutes);
-app.use("/api/wishlist", wishlistRoutes);
-app.use("/api/addresses", addressRoutes);
-app.use("/api/coupons", couponRoutes);
-
+mountRoutes(app);
 app.all("*", (req, res, next) => {
   next(new ApiError(`${req.originalUrl} is not a valid route`, 400));
 });

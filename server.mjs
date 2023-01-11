@@ -14,6 +14,7 @@ import authRoutes from "./Routes/auth.mjs";
 import reviewRoutes from "./Routes/review.mjs";
 import wishlistRoutes from "./Routes/wishlist.mjs";
 import addressRoutes from "./Routes/adress.mjs";
+import couponRoutes from "./Routes/coupon.mjs";
 import ApiError from "./utils/apiError.mjs";
 import errorMiddleware from "./middlewares/errorMiddleware.mjs";
 
@@ -46,6 +47,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/addresses", addressRoutes);
+app.use("/api/coupons", couponRoutes);
 
 app.all("*", (req, res, next) => {
   next(new ApiError(`${req.originalUrl} is not a valid route`, 400));

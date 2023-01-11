@@ -5,12 +5,19 @@ import {
   getAddresses,
   removeAdress,
 } from "../Controllers/adressCntroller.mjs";
+import {
+  addAdressValidators,
+  removeAdressValidator,
+} from "./validators/addressValidators.mjs";
 
 const router = express.Router();
 
 router.use(auth, allowed("user"));
 
-router.route("/").post(addAddress).get(getAddresses);
-router.route("/:addressId").delete(removeAdress);
+router
+  .route("/")
+  .post(...addAdressValidators, addAddress)
+  .get(getAddresses);
+router.route("/:addressId").delete(...removeAdressValidator, removeAdress);
 
 export default router;

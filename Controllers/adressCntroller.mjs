@@ -32,7 +32,7 @@ export const removeAdress = expressAsyncHandler(async (req, res) => {
   );
 
   res.status(200).json({
-    message: "Product added successfully to wishlist",
+    message: "Address removed successfully from your list",
     data: user.addresses,
   });
 });

@@ -5,12 +5,16 @@ import {
   getWishlist,
   removeFromWishlist,
 } from "../Controllers/wishlistCntroller.mjs";
+import { addRemoveValidators } from "./validators/wishlistValidators.mjs";
 
 const router = express.Router();
 
 router.use(auth, allowed("user"));
 
-router.route("/").post(addToWishlist).get(getWishlist);
-router.route("/:productId").delete(removeFromWishlist);
+router
+  .route("/")
+  .post(...addRemoveValidators, addToWishlist)
+  .get(getWishlist);
+router.route("/:productId").delete(...addRemoveValidators, removeFromWishlist);
 
 export default router;

@@ -7,13 +7,24 @@ import {
   getCoupons,
   updateCoupon,
 } from "../Controllers/couponController.mjs";
+import {
+  addCouponValidator,
+  updateCouponValidator,
+} from "./validators/couponValidators.mjs";
 
 const router = express.Router();
 
 router.use(auth, allowed("admin"));
 
-router.route("/").post(addCoupon).get(getCoupons);
+router
+  .route("/")
+  .post(...addCouponValidator, addCoupon)
+  .get(getCoupons);
 
-router.route("/:id").get(getCoupon).put(updateCoupon).delete(deleteCoupon);
+router
+  .route("/:id")
+  .get(getCoupon)
+  .put(...updateCouponValidator, updateCoupon)
+  .delete(deleteCoupon);
 
 export default router;

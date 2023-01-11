@@ -13,7 +13,7 @@ const CouponSchema = new mongoose.Schema(
       required: [true, "Expire date is required"],
     },
     discount: {
-      type: String,
+      type: Number,
       required: [true, "Discount is required"],
     },
   },

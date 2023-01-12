@@ -9,6 +9,7 @@ import reviewRoutes from "./review.mjs";
 import wishlistRoutes from "./wishlist.mjs";
 import addressRoutes from "./adress.mjs";
 import couponRoutes from "./coupon.mjs";
+import cartRoutes from "./cart.mjs";
 
 const mountRoutes = (app) => {
   app.use("/api/categories", categoryRoutes);
@@ -21,6 +22,7 @@ const mountRoutes = (app) => {
   app.use("/api/wishlist", wishlistRoutes);
   app.use("/api/addresses", addressRoutes);
   app.use("/api/coupons", couponRoutes);
+  app.use("/api/cart", cartRoutes);
 };
 
 export default mountRoutes;

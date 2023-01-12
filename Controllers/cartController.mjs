@@ -3,6 +3,14 @@ import CartModel from "../models/cartModel.mjs";
 import ProductModel from "../models/productModel.mjs";
 import ApiError from "../utils/apiError.mjs";
 
+const calcTotalCartPrice = (cart) => {
+  let totalPrice = 0;
+  cart.cartItems.forEach((item) => {
+    totalPrice += item.quantity * item.price;
+  });
+  cart.totalCartPrice = totalPrice;
+};
+
 // @desc Add product to cart
 // @route POST /api/cart
 // @access Private/Protected [User]
@@ -35,7 +43,6 @@ export const addProductToCart = expressAsyncHandler(async (req, res, next) => {
 
     if (productExistence) {
       productExistence.quantity += 1;
-      productExistence.price = product.price * productExistence.quantity;
     } else {
       cart.cartItems.push({
         product: productId,
@@ -46,9 +53,7 @@ export const addProductToCart = expressAsyncHandler(async (req, res, next) => {
     }
   }
 
-  cart.cartItems.forEach((item) => {
-    cart.totalCartPrice += item.price;
-  });
+  calcTotalCartPrice(cart);
 
   await cart.save();
   res.status(200).json({ message: "Product added to cart", data: cart });
@@ -74,9 +79,8 @@ export const removeItemFromCart = expressAsyncHandler(async (req, res) => {
     { new: true }
   );
 
-  cart.cartItems.forEach((item) => {
-    cart.totalCartPrice += item.price;
-  });
+  calcTotalCartPrice(cart);
+
   await cart.save();
   res.status(200).json({ data: cart });
 });
@@ -88,3 +92,31 @@ export const deleteMyCart = expressAsyncHandler(async (req, res) => {
   await CartModel.findOneAndDelete({ user: req.user._id });
   res.status(204).json();
 });
+
+// @desc Update item quantity
+// @route PUT /api/cart/:id
+// @access Private/Protected [User]
+export const updateItemQuantity = expressAsyncHandler(
+  async (req, res, next) => {
+    const cart = await CartModel.findOne({ user: req.user._id });
+
+    if (!cart) {
+      return next(new ApiError("No cart found for user", 404));
+    }
+
+    const product = cart.cartItems.find(
+      (item) => item._id.toString() === req.params.id
+    );
+
+    if (product) {
+      product.quantity = req.body.quantity;
+    } else {
+      next(new ApiError("No product found for this id", 404));
+    }
+
+    calcTotalCartPrice(cart);
+    await cart.save();
+
+    res.status(200).json({ data: cart });
+  }
+);

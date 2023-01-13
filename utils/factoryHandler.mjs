@@ -32,7 +32,10 @@ export const getAllDocuments = (Model, modelName) =>
 
 export const getDocument = (Model, err, populationOpts) =>
   expressAsyncHandler(async (req, res, next) => {
-    const query = Model.findById(req.params.id);
+    let filter = {};
+    if (req.filterObj) filter = req.filterObj;
+
+    const query = Model.findOne({ _id: req.params.id, ...filter });
 
     if (populationOpts) query.populate(populationOpts);
 

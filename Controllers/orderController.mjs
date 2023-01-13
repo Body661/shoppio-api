@@ -56,7 +56,6 @@ export const getAllOrders = factory.getAllDocuments(OrderModel, "Order");
 // @desc    get specific order
 // @route   GET /api/orders/:id
 // @access  Private/Protected [Admin - User]
-
 export const filterOrder = expressAsyncHandler(async (req, res, next) => {
   if (req.user.role === "user") req.filterObj = { user: req.user._id };
   next();
@@ -64,4 +63,40 @@ export const filterOrder = expressAsyncHandler(async (req, res, next) => {
 export const getOrder = factory.getDocument(
   OrderModel,
   "No Order found for this Id"
+);
+
+// @desc    Update order pay state
+// @route   POST /api/orders/:id/pay
+// @access  Private/Protected [Admin]
+export const updateOrderPay = expressAsyncHandler(async (req, res, next) => {
+  const order = await OrderModel.findById(req.params.id);
+
+  if (!order) {
+    return next(new ApiError("No order found for this id", 404));
+  }
+
+  order.isPaid = true;
+  order.paidAt = Date.now();
+
+  await order.save();
+  res.status(200).json({ data: order });
+});
+
+// @desc    Update order delivered state
+// @route   POST /api/orders/:id/delivered
+// @access  Private/Protected [Admin]
+export const updateOrderDelivered = expressAsyncHandler(
+  async (req, res, next) => {
+    const order = await OrderModel.findById(req.params.id);
+
+    if (!order) {
+      return next(new ApiError("No order found for this id", 404));
+    }
+
+    order.isDelivered = true;
+    order.deliveredAt = Date.now();
+
+    await order.save();
+    res.status(200).json({ data: order });
+  }
 );

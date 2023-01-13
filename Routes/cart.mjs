@@ -1,6 +1,7 @@
 import express from "express";
 import {
   addProductToCart,
+  applyCoupon,
   deleteMyCart,
   getMyCart,
   removeItemFromCart,
@@ -14,5 +15,6 @@ router.use(auth, allowed("user"));
 
 router.route("/").post(addProductToCart).get(getMyCart).delete(deleteMyCart);
 router.route("/:id").delete(removeItemFromCart).put(updateItemQuantity);
+router.post("/coupon", applyCoupon);
 
 export default router;

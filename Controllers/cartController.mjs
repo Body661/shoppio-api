@@ -2,6 +2,7 @@ import expressAsyncHandler from "express-async-handler";
 import CartModel from "../models/cartModel.mjs";
 import ProductModel from "../models/productModel.mjs";
 import ApiError from "../utils/apiError.mjs";
+import CouponModel from "../models/couponModel.mjs";
 
 const calcTotalCartPrice = (cart) => {
   let totalPrice = 0;
@@ -9,6 +10,7 @@ const calcTotalCartPrice = (cart) => {
     totalPrice += item.quantity * item.price;
   });
   cart.totalCartPrice = totalPrice;
+  cart.totalPriceAfterDiscount = undefined;
 };
 
 // @desc Add product to cart
@@ -19,7 +21,7 @@ export const addProductToCart = expressAsyncHandler(async (req, res, next) => {
   const product = await ProductModel.findOne({ _id: productId });
 
   if (!product) {
-    return next(new ApiError("Product not found"));
+    return next(new ApiError("Product not found", 404));
   }
 
   let cart = await CartModel.findOne({ user: req.user._id });
@@ -120,3 +122,34 @@ export const updateItemQuantity = expressAsyncHandler(
     res.status(200).json({ data: cart });
   }
 );
+
+// @desc Apply coupon to cart
+// @route PUT /api/cart/coupon
+// @access Private/Protected [User]
+export const applyCoupon = expressAsyncHandler(async (req, res, next) => {
+  const coupon = await CouponModel.findOne({
+    name: req.body.coupon,
+    expire: { $gt: Date.now() },
+  });
+
+  if (!coupon) {
+    return next(new ApiError("Coupon code is invalid or expired", 404));
+  }
+
+  const cart = await CartModel.findOne({ user: req.user._id });
+
+  if (!cart) {
+    return next(new ApiError("No cart found for user", 404));
+  }
+
+  calcTotalCartPrice(cart);
+  cart.totalPriceAfterDiscount = (
+    cart.totalCartPrice -
+    (cart.totalCartPrice * coupon.discount) / 100
+  ).toFixed(2);
+
+  console.log(cart.totalPriceAfterDiscount);
+
+  await cart.save(cart.totalPriceAfterDiscount);
+  res.status(200).json({ data: cart });
+});

@@ -2,6 +2,9 @@ import express from "express";
 import cors from "cors";
 import hpp from "hpp";
 import dotenv from "dotenv";
+import helmet from "helmet";
+import mongoSanitize from "express-mongo-sanitize";
+import xss from "xss-clean";
 import compression from "compression";
 import morgan from "morgan";
 import { fileURLToPath } from "url";
@@ -22,6 +25,7 @@ app.use(cors());
 app.options("*", cors());
 
 app.use(compression());
+app.use(helmet());
 
 app.post(
   "/webhook-checkout",
@@ -38,6 +42,9 @@ dbConnect();
 
 // Middleware
 app.use(express.json({ limit: "20kb" }));
+app.use(mongoSanitize());
+app.use(xss());
+
 app.use(express.static(path.join(__dirname, "uploads")));
 
 if (process.env.NODE_ENV === "development") {

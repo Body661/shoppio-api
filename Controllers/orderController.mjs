@@ -130,7 +130,7 @@ export const checkoutSession = expressAsyncHandler(async (req, res, next) => {
     line_items: [
       {
         price_data: {
-          unit_amount: price * 100,
+          unit_amount: Math.round(price * 100),
           currency: "eur",
           product_data: {
             name: req.user.name,

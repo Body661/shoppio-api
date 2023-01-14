@@ -6,6 +6,7 @@ import UserModel from "../models/userModel.mjs";
 import ApiError from "../utils/apiError.mjs";
 import sendEmail from "../utils/sendEmail.mjs";
 import signToken from "../utils/signJWT.mjs";
+import { sanitizeUser } from "../utils/sanitizeData.mjs";
 
 // @desc Signup
 // @route POST /api/auth/signup
@@ -32,7 +33,7 @@ export const signup = expressAsyncHandler(async (req, res) => {
     },
   });
 
-  res.status(201).json({ data: user, token });
+  res.status(201).json({ data: sanitizeUser(user), token });
 });
 
 // @desc Login
@@ -46,7 +47,7 @@ export const login = expressAsyncHandler(async (req, res, next) => {
   }
 
   const token = signToken(user._id);
-  res.status(200).json({ data: user, token });
+  res.status(200).json({ data: sanitizeUser(user), token });
 });
 
 // @desc Auth middleware responsible for checking if the user is authenticated or not

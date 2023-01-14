@@ -12,6 +12,8 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "colors": "^1.4.0",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "express-async-handler": "^1.2.0",
@@ -25,6 +27,7 @@
     "nodemailer-express-handlebars": "^6.0.0",
     "sharp": "^0.31.3",
     "slugify": "^1.6.5",
+    "stripe": "^8.212.0",
     "uuidv4": "^6.2.13",
     "validator": "^13.7.0"
   },

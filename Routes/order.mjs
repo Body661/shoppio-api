@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  checkoutSession,
   createCashOrder,
   filterOrder,
   filterOrders,
@@ -13,6 +14,8 @@ import { allowed, auth } from "../Controllers/authController.mjs";
 const router = express.Router();
 
 router.use(auth);
+
+router.get("/checkout/:cartId", allowed("user"), checkoutSession);
 
 router.route("/:cartId").post(allowed("user"), createCashOrder);
 router

@@ -1,9 +1,17 @@
+import dotenv from "dotenv";
+import Stripe from "stripe";
 import expressAsyncHandler from "express-async-handler";
 import CartModel from "../models/cartModel.mjs";
 import ApiError from "../utils/apiError.mjs";
 import OrderModel from "../models/orderModel.mjs";
 import ProductModel from "../models/productModel.mjs";
 import * as factory from "../utils/factoryHandler.mjs";
+
+dotenv.config({ path: "config.env" });
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2022-11-15",
+});
 
 // @desc    create cash order
 // @route   POST /api/orders/cartId
@@ -100,3 +108,44 @@ export const updateOrderDelivered = expressAsyncHandler(
     res.status(200).json({ data: order });
   }
 );
+
+// @desc    Checkout stripe session
+// @route   GET /api/orders/checkout/cartId
+// @access  Private/Protected [User]
+export const checkoutSession = expressAsyncHandler(async (req, res, next) => {
+  const cart = await CartModel.findOne({
+    _id: req.params.cartId,
+    user: req.user._id,
+  });
+
+  if (!cart) {
+    return next(new ApiError("No cart found for this id", 404));
+  }
+
+  const price = cart.totalPriceAfterDiscount
+    ? cart.totalPriceAfterDiscount
+    : cart.totalCartPrice;
+
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        price_data: {
+          unit_amount: price * 100,
+          currency: "eur",
+          product_data: {
+            name: req.user.name,
+          },
+        },
+        quantity: 1,
+      },
+    ],
+    mode: "payment",
+    success_url: `${req.protocol}://${req.get("host")}/orders`,
+    cancel_url: `${req.protocol}://${req.get("host")}/cart`,
+    customer_email: req.user.email,
+    client_reference_id: cart._id,
+    metadata: req.body.shippingAddress,
+  });
+
+  res.status(200).json({ session });
+});

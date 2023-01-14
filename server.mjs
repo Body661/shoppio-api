@@ -1,5 +1,7 @@
 import express from "express";
+import cors from "cors";
 import dotenv from "dotenv";
+import compression from "compression";
 import morgan from "morgan";
 import { fileURLToPath } from "url";
 import path, { dirname } from "path";
@@ -13,6 +15,12 @@ dotenv.config({ path: "config.env" });
 
 // App configuration
 const app = express();
+
+app.use(cors());
+app.options("*", cors());
+
+app.use(compression());
+
 const { PORT } = process.env;
 
 const __filename = fileURLToPath(import.meta.url);

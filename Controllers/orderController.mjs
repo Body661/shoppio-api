@@ -6,6 +6,7 @@ import ApiError from "../utils/apiError.mjs";
 import OrderModel from "../models/orderModel.mjs";
 import ProductModel from "../models/productModel.mjs";
 import * as factory from "../utils/factoryHandler.mjs";
+import UserModel from "../models/userModel.mjs";
 
 dotenv.config({ path: "config.env" });
 
@@ -33,7 +34,6 @@ export const createCashOrder = expressAsyncHandler(async (req, res, next) => {
     shippingAddress: req.body.shippingAddress,
     totalOrderPrice: price,
     paymentMethodType: "cash",
-    paidAt: Date.now(),
   });
 
   if (order) {
@@ -150,6 +150,37 @@ export const checkoutSession = expressAsyncHandler(async (req, res, next) => {
   res.status(200).json({ session });
 });
 
+const createOrder = async (session) => {
+  const cartId = session.client_reference_id;
+  const shippingAddress = session.metadata;
+  const price = session.amount_total / 100;
+
+  const cart = await CartModel.findById(cartId);
+  const user = await UserModel.findOne({ email: session.customer_email });
+
+  const order = await OrderModel.create({
+    user: user._id,
+    cartItems: cart.cartItems,
+    shippingAddress,
+    totalOrderPrice: price,
+    paymentMethodType: "card",
+    isPaid: true,
+    paidAt: Date.now(),
+  });
+
+  if (order) {
+    const bulkOptions = cart.cartItems.map((item) => ({
+      updateOne: {
+        filter: { _id: item.product },
+        update: { $inc: { quantity: -item.quantity, sold: +item.quantity } },
+      },
+    }));
+    await ProductModel.bulkWrite(bulkOptions, {});
+
+    await CartModel.findByIdAndDelete(cartId);
+  }
+};
+
 export const webhookCheckout = expressAsyncHandler(async (req, res, next) => {
   const sig = req.headers["stripe-signature"];
 
@@ -165,6 +196,8 @@ export const webhookCheckout = expressAsyncHandler(async (req, res, next) => {
   }
 
   if (event.type === "checkout.session.completed") {
-    console.log("Checkout done");
+    createOrder(event.data.object);
   }
+
+  res.status(201).json({ received: true });
 });

@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import hpp from "hpp";
 import dotenv from "dotenv";
 import compression from "compression";
 import morgan from "morgan";
@@ -54,6 +55,8 @@ const limiter = rateLimit({
 
 // Apply the rate limiting middleware to all requests
 app.use("/api", limiter);
+
+app.use(hpp({ whitelist: ["price", "sold", "quantity", "ratingsAvg"] }));
 
 mountRoutes(app);
 app.all("*", (req, res, next) => {

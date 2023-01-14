@@ -5,7 +5,7 @@ import compression from "compression";
 import morgan from "morgan";
 import { fileURLToPath } from "url";
 import path, { dirname } from "path";
-
+import rateLimit from "express-rate-limit";
 import dbConnect from "./config/db.mjs";
 import ApiError from "./utils/apiError.mjs";
 import errorMiddleware from "./middlewares/errorMiddleware.mjs";
@@ -42,6 +42,18 @@ app.use(express.static(path.join(__dirname, "uploads")));
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 150,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message:
+    "Too many Requests created from this IP, please try again after 15 minutes",
+});
+
+// Apply the rate limiting middleware to all requests
+app.use("/api", limiter);
 
 mountRoutes(app);
 app.all("*", (req, res, next) => {

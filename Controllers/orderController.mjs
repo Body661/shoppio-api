@@ -7,8 +7,9 @@ import OrderModel from "../models/orderModel.mjs";
 import ProductModel from "../models/productModel.mjs";
 import * as factory from "../utils/factoryHandler.mjs";
 import UserModel from "../models/userModel.mjs";
+import sendEmail from "../utils/sendEmail.mjs";
 
-dotenv.config({ path: "config.env" });
+dotenv.config({path: "config.env"});
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2022-11-15",
@@ -18,15 +19,18 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 // @route   POST /api/orders/cartId
 // @access  Private/Protected [User]
 export const createCashOrder = expressAsyncHandler(async (req, res, next) => {
-  const cart = await CartModel.findById(req.params.cartId);
+  const cart = await CartModel.findOne({
+    _id: req.params.cartId,
+    user: req.user._id,
+  });
 
   if (!cart) {
-    return next(new ApiError("No cart found for user", 404));
+    return next(new ApiError("No cart found", 404));
   }
 
   const price = cart.totalPriceAfterDiscount
-    ? cart.totalPriceAfterDiscount
-    : cart.totalCartPrice;
+      ? cart.totalPriceAfterDiscount
+      : cart.totalCartPrice;
 
   const order = await OrderModel.create({
     user: req.user._id,
@@ -39,8 +43,8 @@ export const createCashOrder = expressAsyncHandler(async (req, res, next) => {
   if (order) {
     const bulkOptions = cart.cartItems.map((item) => ({
       updateOne: {
-        filter: { _id: item.product },
-        update: { $inc: { quantity: -item.quantity, sold: +item.quantity } },
+        filter: {_id: item.product},
+        update: {$inc: {quantity: -item.quantity, sold: +item.quantity}},
       },
     }));
     await ProductModel.bulkWrite(bulkOptions, {});
@@ -48,11 +52,11 @@ export const createCashOrder = expressAsyncHandler(async (req, res, next) => {
     await CartModel.findByIdAndDelete(req.params.cartId);
   }
 
-  res.status(201).json({ data: order });
+  res.status(201).json({data: order});
 });
 
 export const filterOrders = expressAsyncHandler(async (req, res, next) => {
-  if (req.user.role === "user") req.filterObj = { user: req.user._id };
+  if (req.user.role === "user") req.filterObj = {user: req.user._id};
   next();
 });
 
@@ -65,12 +69,12 @@ export const getAllOrders = factory.getAllDocuments(OrderModel, "Order");
 // @route   GET /api/orders/:id
 // @access  Private/Protected [Admin - User]
 export const filterOrder = expressAsyncHandler(async (req, res, next) => {
-  if (req.user.role === "user") req.filterObj = { user: req.user._id };
+  if (req.user.role === "user") req.filterObj = {user: req.user._id};
   next();
 });
 export const getOrder = factory.getDocument(
-  OrderModel,
-  "No Order found for this Id"
+    OrderModel,
+    "No Order found for this Id"
 );
 
 // @desc    Update order pay state
@@ -87,26 +91,26 @@ export const updateOrderPay = expressAsyncHandler(async (req, res, next) => {
   order.paidAt = Date.now();
 
   await order.save();
-  res.status(200).json({ data: order });
+  res.status(200).json({data: order});
 });
 
 // @desc    Update order delivered state
 // @route   POST /api/orders/:id/delivered
 // @access  Private/Protected [Admin]
 export const updateOrderDelivered = expressAsyncHandler(
-  async (req, res, next) => {
-    const order = await OrderModel.findById(req.params.id);
+    async (req, res, next) => {
+      const order = await OrderModel.findById(req.params.id);
 
-    if (!order) {
-      return next(new ApiError("No order found for this id", 404));
+      if (!order) {
+        return next(new ApiError("No order found for this id", 404));
+      }
+
+      order.isDelivered = true;
+      order.deliveredAt = Date.now();
+
+      await order.save();
+      res.status(200).json({data: order});
     }
-
-    order.isDelivered = true;
-    order.deliveredAt = Date.now();
-
-    await order.save();
-    res.status(200).json({ data: order });
-  }
 );
 
 // @desc    Checkout stripe session
@@ -123,8 +127,8 @@ export const checkoutSession = expressAsyncHandler(async (req, res, next) => {
   }
 
   const price = cart.totalPriceAfterDiscount
-    ? cart.totalPriceAfterDiscount
-    : cart.totalCartPrice;
+      ? cart.totalPriceAfterDiscount
+      : cart.totalCartPrice;
 
   const session = await stripe.checkout.sessions.create({
     line_items: [
@@ -147,7 +151,7 @@ export const checkoutSession = expressAsyncHandler(async (req, res, next) => {
     metadata: req.body.shippingAddress,
   });
 
-  res.status(200).json({ session });
+  res.status(200).json({session});
 });
 
 const createOrder = async (session) => {
@@ -156,7 +160,7 @@ const createOrder = async (session) => {
   const price = session.amount_total / 100;
 
   const cart = await CartModel.findById(cartId);
-  const user = await UserModel.findOne({ email: session.customer_email });
+  const user = await UserModel.findOne({email: session.customer_email});
 
   const order = await OrderModel.create({
     user: user._id,
@@ -171,8 +175,8 @@ const createOrder = async (session) => {
   if (order) {
     const bulkOptions = cart.cartItems.map((item) => ({
       updateOne: {
-        filter: { _id: item.product },
-        update: { $inc: { quantity: -item.quantity, sold: +item.quantity } },
+        filter: {_id: item.product},
+        update: {$inc: {quantity: -item.quantity, sold: +item.quantity}},
       },
     }));
     await ProductModel.bulkWrite(bulkOptions, {});
@@ -187,9 +191,9 @@ export const webhookCheckout = expressAsyncHandler(async (req, res, next) => {
   let event;
   try {
     event = stripe.webhooks.constructEvent(
-      req.body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET
+        req.body,
+        sig,
+        process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
     return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -199,5 +203,5 @@ export const webhookCheckout = expressAsyncHandler(async (req, res, next) => {
     createOrder(event.data.object);
   }
 
-  res.status(201).json({ received: true });
+  res.status(201).json({received: true});
 });

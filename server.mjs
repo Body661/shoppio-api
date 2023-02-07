@@ -25,7 +25,9 @@ app.use(cors());
 app.options("*", cors());
 
 app.use(compression());
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: false
+}));
 
 app.post(
   "/webhook-checkout",
@@ -42,6 +44,7 @@ dbConnect();
 
 // Middleware
 app.use(express.json({ limit: "20kb" }));
+app.use(express.urlencoded({extended: true}));
 app.use(mongoSanitize());
 app.use(xss());
 
@@ -53,7 +56,7 @@ if (process.env.NODE_ENV === "development") {
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 150,
+  max: 10000,
   standardHeaders: true,
   legacyHeaders: false,
   message:
@@ -63,7 +66,7 @@ const limiter = rateLimit({
 // Apply the rate limiting middleware to all requests
 app.use("/api", limiter);
 
-app.use(hpp({ whitelist: ["price", "sold", "quantity", "ratingsAvg"] }));
+app.use(hpp({ whitelist: ["price", "sold", "quantity", "ratingsAvg", "category"] }));
 
 mountRoutes(app);
 app.all("*", (req, res, next) => {

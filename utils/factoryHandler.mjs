@@ -58,7 +58,7 @@ export const updateDocument = (Model, err) =>
       return next(new ApiError(err, 404));
     }
 
-    document.save();
+    // await document.save();
     res.status(200).json({ data: document });
   });
 

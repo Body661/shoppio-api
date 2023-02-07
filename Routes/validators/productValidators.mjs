@@ -21,7 +21,7 @@ const duplicateValidators = [
     .isArray()
     .withMessage("images should be array of string"),
 
-  check("brand").optional().isMongoId().withMessage("Invalid ID formate"),
+  check("brand").optional().isMongoId().withMessage("Invalid ID format"),
   check("ratingsAvg")
     .optional()
     .isNumeric()

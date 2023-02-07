@@ -79,8 +79,8 @@ ProductSchema.virtual("reviews", {
 ProductSchema.pre(/^find/, function (next) {
   this.populate([
     { path: "category", select: "name" },
-    { path: "subcategories", select: "name -_id" },
-    { path: "brand", select: "name -_id" },
+    { path: "subcategories", select: "name" },
+    { path: "brand", select: "name" },
   ]);
 
   next();

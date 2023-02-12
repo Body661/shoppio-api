@@ -39,8 +39,8 @@ export const addProductToCart = expressAsyncHandler(async (req, res, next) => {
             ],
         });
     } else {
-        const productExistence = cart.cartItems.find(
-            (prod) => productId === prod.product.toString() && color === prod.color
+        const productExistence = cart.cartItems?.find(
+            (prod) => productId === prod?.product?._id.toString() && color === prod.color
         );
 
         if (productExistence) {
@@ -100,7 +100,7 @@ export const deleteMyCart = expressAsyncHandler(async (req, res) => {
 // @access Private/Protected [User]
 export const updateItemQuantity = expressAsyncHandler(
     async (req, res, next) => {
-        const cart = await CartModel.findOne({user: req.user._id});
+        let cart = await CartModel.findOne({user: req.user._id});
 
         if (!cart) {
             return next(new ApiError("No cart found for user", 404));
@@ -111,7 +111,19 @@ export const updateItemQuantity = expressAsyncHandler(
         );
 
         if (product) {
-            product.quantity = req.body.quantity;
+            if (req.body.quantity > 0 && req.body.quantity <= product.product.quantity) {
+                product.quantity = req.body.quantity;
+            } else if (req.body.quantity > 0 && req.body.quantity > product.product.quantity) {
+                product.quantity = product.product.quantity;
+            } else {
+                cart = await CartModel.findOneAndUpdate(
+                    {user: req.user._id},
+                    {
+                        $pull: {cartItems: {_id: req.params.id}},
+                    },
+                    {new: true}
+                );
+            }
         } else {
             next(new ApiError("No product found for this id", 404));
         }
@@ -148,6 +160,7 @@ export const applyCoupon = expressAsyncHandler(async (req, res, next) => {
         (cart.totalCartPrice * coupon.discount) / 100
     ).toFixed(2);
 
+    cart.coupon = req.body.coupon;
     await cart.save(cart.totalPriceAfterDiscount);
     res.status(200).json({data: cart});
 });

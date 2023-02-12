@@ -7,7 +7,11 @@ import CouponModel from "../models/couponModel.mjs";
 const calcTotalCartPrice = (cart) => {
     let totalPrice = 0;
     cart.cartItems.forEach((item) => {
-        totalPrice += item.quantity * item.price;
+        if (item.priceAfterDiscount > 0) {
+            totalPrice += item.quantity * item.priceAfterDiscount;
+        } else {
+            totalPrice += item.quantity * item.price;
+        }
     });
     cart.totalCartPrice = totalPrice;
     cart.totalPriceAfterDiscount = undefined;
@@ -35,6 +39,7 @@ export const addProductToCart = expressAsyncHandler(async (req, res, next) => {
                     quantity: quantity,
                     color: color,
                     price: product.price,
+                    priceAfterDiscount: product.priceAfterDiscount,
                 },
             ],
         });
@@ -51,6 +56,7 @@ export const addProductToCart = expressAsyncHandler(async (req, res, next) => {
                 quantity: quantity,
                 color: color,
                 price: product.price,
+                priceAfterDiscount: product.priceAfterDiscount,
             });
         }
     }

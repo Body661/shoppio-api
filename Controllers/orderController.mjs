@@ -28,9 +28,7 @@ export const createCashOrder = expressAsyncHandler(async (req, res, next) => {
     return next(new ApiError("No cart found", 404));
   }
 
-  const price = cart.totalPriceAfterDiscount
-      ? cart.totalPriceAfterDiscount
-      : cart.totalCartPrice;
+  const price = cart.totalPriceAfterDiscount ? cart.totalPriceAfterDiscount : cart.totalCartPrice
 
   const order = await OrderModel.create({
     user: req.user._id,
@@ -126,9 +124,7 @@ export const checkoutSession = expressAsyncHandler(async (req, res, next) => {
     return next(new ApiError("No cart found for this id", 404));
   }
 
-  const price = cart.totalPriceAfterDiscount
-      ? cart.totalPriceAfterDiscount
-      : cart.totalCartPrice;
+  const price = cart.totalPriceAfterDiscount ? cart.totalPriceAfterDiscount : cart.totalCartPrice
 
   const session = await stripe.checkout.sessions.create({
     line_items: [
@@ -144,8 +140,8 @@ export const checkoutSession = expressAsyncHandler(async (req, res, next) => {
       },
     ],
     mode: "payment",
-    success_url: `${req.protocol}://${req.get("host")}/orders`,
-    cancel_url: `${req.protocol}://${req.get("host")}/cart`,
+    success_url: `${process.env.FRONTEND_URL}/user/allOrders`,
+    cancel_url: `${process.env.FRONTEND_URL}/cart`,
     customer_email: req.user.email,
     client_reference_id: req.params.cartId,
     metadata: req.body.shippingAddress,

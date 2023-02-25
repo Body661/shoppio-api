@@ -60,7 +60,6 @@ OrderSchema.pre(/^find/, function (next) {
     { path: "user", select: "name email phone" },
     {
       path: "cartItems.product",
-      select: "title price -category -subcategories",
     },
   ]);
   next();

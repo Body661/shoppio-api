@@ -30,6 +30,27 @@ export const getAddress = expressAsyncHandler(async (req, res, next) => {
     return res.status(200).json({data: address});
 });
 
+// @desc Update user address
+// @route PUT /api/addresses/:id
+// @access Private/Protected [User]
+export const updateAddress = expressAsyncHandler(async (req, res) => {
+
+    const addressIndex = req.user.addresses.findIndex(
+        (address) => address._id.toString() === req.params.addressId
+    );
+
+    Object.keys(req.body).forEach((key) => {
+        req.user.addresses[addressIndex][key] = req.body[key];
+    });
+
+    const updatedUser = await req.user.save();
+
+    res.status(200).json({
+        message: "Address updated successfully",
+        data: updatedUser.addresses,
+    });
+});
+
 // @desc Delete address from addresses list
 // @route DELETE /api/addresses/:addressId
 // @access Private/Protected [User]

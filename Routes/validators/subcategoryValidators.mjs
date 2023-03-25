@@ -26,7 +26,7 @@ export const createSubcategoryValidator = [
         .isMongoId()
         .withMessage("Category ID is not valid")
         .custom(async (value, {req}) => {
-            const category = await categoryModel.findById(req)
+            const category = await categoryModel.findById(value)
 
             if (!category) {
                 throw new Error("Category does not exist")

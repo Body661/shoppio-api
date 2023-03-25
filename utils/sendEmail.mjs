@@ -24,7 +24,7 @@ const sendEmail = async (options) => {
   transporter.use("compile", hbs(handlebarOptions));
 
   const mailtOpts = {
-    from: `E-commerce App <${process.env.EMAIL_USER}>`,
+    from: process.env.EMAIL_USER,
     to: options.email,
     subject: options.subject,
     template: options.template,

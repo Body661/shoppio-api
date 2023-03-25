@@ -13,7 +13,7 @@ const calcTotalCartPrice = (cart) => {
             totalPrice += item.quantity * item.price;
         }
     });
-    cart.totalCartPrice = totalPrice;
+    cart.totalCartPrice = totalPrice.toFixed(2);
     cart.totalPriceAfterDiscount = undefined;
 };
 

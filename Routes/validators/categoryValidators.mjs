@@ -1,5 +1,4 @@
 import {check} from "express-validator";
-import slugify from "slugify";
 import validatorMiddleware from "../../middlewares/validatorMiddleware.mjs";
 import CategoryModel from "../../models/categoryModel.mjs";
 
@@ -24,7 +23,6 @@ export const createCategoryValidator = [
                 throw new Error("Category name already in use")
             }
 
-            req.body.slug = slugify(value);
             return true;
         }),
     validatorMiddleware,
@@ -48,7 +46,6 @@ export const updateCategoryValidator = [
                 throw new Error("Category name already in use")
             }
 
-            req.body.slug = slugify(value);
             return true;
         }),
     validatorMiddleware,

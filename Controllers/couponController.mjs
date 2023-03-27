@@ -15,23 +15,23 @@ export const getCoupons = factory.getAllDocuments(CouponModel);
 // @route GET /api/coupons/:id
 // @access Private/Protected [Admin]
 export const getCoupon = factory.getDocument(
-  CouponModel,
-  "Coupon code is invalid or expired"
+    CouponModel,
+    "Coupon code is invalid or expired"
 );
 
 // @desc Update a Coupon
 // @route PUT /api/coupons/:id
 // @access Private/Protected [Admin]
 export const updateCoupon = factory.updateDocument(
-  CouponModel,
-  "Coupon not found"
+    CouponModel,
+    "Coupon not found"
 );
 
 // @desc Delete a Coupon
 // @route DELETE /api/Coupons/:id
 // @access Private/Protected [Admin]
 export const deleteCoupon = factory.deleteDocument(
-  CouponModel,
-  "Coupon not found",
-  "Coupon deleted successfully"
+    CouponModel,
+    "Coupon not found",
+    "Coupon deleted successfully"
 );

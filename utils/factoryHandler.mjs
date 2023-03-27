@@ -3,50 +3,50 @@ import ApiError from "./apiError.mjs";
 import ApiFeatures from "./apiFeatures.mjs";
 
 export const createDocument = (Model) =>
-  expressAsyncHandler(async (req, res, next) => {
-    const data = await Model.create(req.body);
+    expressAsyncHandler(async (req, res, next) => {
+        const data = await Model.create(req.body);
 
-    res.status(201).json(data);
-  });
+        res.status(201).json(data);
+    });
 
 export const getAllDocuments = (Model, modelName) =>
-  expressAsyncHandler(async (req, res, next) => {
-    let filter = {};
-    if (req.filterObj) filter = req.filterObj;
+    expressAsyncHandler(async (req, res, next) => {
+        let filter = {};
+        if (req.filterObj) filter = req.filterObj;
 
-    // Build query
-    const docsCount = await Model.countDocuments();
-    const apiFeatures = new ApiFeatures(Model.find(filter), req.query)
-      .paginate(docsCount)
-      .search(modelName)
-      .filter()
-      .limit()
-      .sort();
+        // Build query
+        const docsCount = await Model.countDocuments();
+        const apiFeatures = new ApiFeatures(Model.find(filter), req.query)
+            .paginate(docsCount)
+            .search(modelName)
+            .filter()
+            .limit()
+            .sort();
 
-    // Execute query
-    const { query, paginationRes } = apiFeatures;
-    const docs = await query;
+        // Execute query
+        const {query, paginationRes} = apiFeatures;
+        const docs = await query;
 
-    res.status(200).json({ amount: docs.length, paginationRes, data: docs });
-  });
+        res.status(200).json({amount: docs.length, paginationRes, data: docs});
+    });
 
 export const getDocument = (Model, err, populationOpts) =>
-  expressAsyncHandler(async (req, res, next) => {
-    let filter = {};
-    if (req.filterObj) filter = req.filterObj;
+    expressAsyncHandler(async (req, res, next) => {
+        let filter = {};
+        if (req.filterObj) filter = req.filterObj;
 
-    const query = Model.findOne({ _id: req.params.id, ...filter });
+        const query = Model.findOne({_id: req.params.id, ...filter});
 
-    if (populationOpts) query.populate(populationOpts);
+        if (populationOpts) query.populate(populationOpts);
 
-    const doc = await query;
+        const doc = await query;
 
-    if (!doc) {
-      return next(new ApiError(err, 404));
-    }
+        if (!doc) {
+            return next(new ApiError(err, 404));
+        }
 
-    res.status(200).json({ data: doc });
-  });
+        res.status(200).json({data: doc});
+    });
 
 export const updateDocument = (Model, err) =>
   expressAsyncHandler(async (req, res, next) => {

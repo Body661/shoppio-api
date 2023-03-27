@@ -7,10 +7,10 @@ import * as factory from "../utils/factoryHandler.mjs";
 export const addSubcategory = factory.createDocument(SubcategoryModel);
 
 export const createFilterObj = (req, res, next) => {
-  let filter = {};
-  if (req.params.categoryId) filter = { category: req.params.categoryId };
-  req.filterObj = filter;
-  next();
+    let filter = {};
+    if (req.params.categoryId) filter = {category: req.params.categoryId};
+    req.filterObj = filter;
+    next();
 };
 
 // @desc_1 Get all subcategories
@@ -26,23 +26,23 @@ export const getSubcategories = factory.getAllDocuments(SubcategoryModel);
 // @route GET /api/subcategories/:id
 // @access Public
 export const getSubcategory = factory.getDocument(
-  SubcategoryModel,
-  "Subcategory not found"
+    SubcategoryModel,
+    "Subcategory not found"
 );
 
 // @desc Update a subcategories
 // @route PUT /api/subcategories/:id
 // @access Private/Protected [Admin]
 export const updateSubcategory = factory.updateDocument(
-  SubcategoryModel,
-  "Subcategory not found"
+    SubcategoryModel,
+    "Subcategory not found"
 );
 
 // @desc Delete a subcategories
 // @route DELETE /api/subcategories/:id
 // @access Private/Protected [Admin]
 export const deleteSubcategory = factory.deleteDocument(
-  SubcategoryModel,
-  "Subcategory not found",
-  "Subcategory deleted successfully"
+    SubcategoryModel,
+    "Subcategory not found",
+    "Subcategory deleted successfully"
 );

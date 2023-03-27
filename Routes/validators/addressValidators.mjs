@@ -96,6 +96,17 @@ export const removeAddressValidator = [
         .notEmpty()
         .withMessage("Address id is required")
         .isMongoId()
-        .withMessage("Address id is not valid"),
+        .withMessage("Address id is not valid")
+        .custom(async (addressId, {req}) => {
+            const addressIndex = req.user.addresses.findIndex(
+                (address) => address._id.toString() === addressId
+            );
+
+            if (addressIndex === -1) {
+                throw new Error("Address not found");
+            }
+
+            return true;
+        }),
     validatorMiddleware,
 ];

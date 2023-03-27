@@ -1,27 +1,27 @@
 import expressAsyncHandler from "express-async-handler";
-import { uuid } from "uuidv4";
+import {uuid} from "uuidv4";
 import sharp from "sharp";
 import BrandModel from "../models/brandModel.mjs";
 import * as factory from "../utils/factoryHandler.mjs";
-import { uploadSingle } from "../middlewares/imageUploadMiddleware.mjs";
+import {uploadSingle} from "../middlewares/imageUploadMiddleware.mjs";
 
 export const uploadBrandImg = uploadSingle("img");
 
 export const imageProcessing = expressAsyncHandler(async (req, res, next) => {
-  const filename = `brand-${uuid()}-${Date.now()}.png`;
+    const filename = `brand-${uuid()}-${Date.now()}.png`;
 
-  if (req.file) {
-    await sharp(req.file.buffer)
-      .resize(600, 600)
-      .toFormat("png")
-      .jpeg({ quality: 90 })
-      .toFile(`uploads/brands/${filename}`);
+    if (req.file) {
+        await sharp(req.file.buffer)
+            .resize(600, 600)
+            .toFormat("png")
+            .png({quality: 90})
+            .toFile(`uploads/brands/${filename}`);
 
-    req.body.img = filename;
-  }
+        req.body.img = filename;
+    }
 
 
-  next();
+    next();
 });
 
 // @desc Create a new brand
@@ -43,15 +43,15 @@ export const getBrand = factory.getDocument(BrandModel, "Brand not found");
 // @route PUT /api/brands/:id
 // @access Private/Protected [Admin]
 export const updateBrand = factory.updateDocument(
-  BrandModel,
-  "Brand not found"
+    BrandModel,
+    "Brand not found"
 );
 
 // @desc Delete a brand
 // @route DELETE /api/brands/:id
 // @access Private/Protected [Admin]
 export const deleteBrand = factory.deleteDocument(
-  BrandModel,
-  "Brand not found",
-  "Brand deleted successfully"
+    BrandModel,
+    "Brand not found",
+    "Brand deleted successfully",
 );

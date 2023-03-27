@@ -24,55 +24,55 @@ export const getUser = factory.getDocument(UserModel, "User not found");
 // @route PUT /api/users/:id
 // @access Private/Protected [Admin]
 export const updateUser = expressAsyncHandler(async (req, res, next) => {
-  const document = await UserModel.findByIdAndUpdate(
-    req.params.id,
-    {
-      name: req.body.name,
-      email: req.body.email,
-      phone: req.body.phone,
-      role: req.body.role,
-    },
-    {
-      new: true,
+    const document = await UserModel.findByIdAndUpdate(
+        req.params.id,
+        {
+            name: req.body.name,
+            email: req.body.email,
+            phone: req.body.phone,
+            role: req.body.role,
+        },
+        {
+            new: true,
+        }
+    );
+
+    if (!document) {
+        return next(new ApiError("User not found", 404));
     }
-  );
 
-  if (!document) {
-    return next(new ApiError("User not found", 404));
-  }
-
-  res.status(200).json(document);
+    res.status(200).json(document);
 });
 
 // @desc Update user password by id
 // @route PUT /api/users/changePassword/:id
 // @access Private/Protected [Admin]
 export const updateUserPassword = expressAsyncHandler(
-  async (req, res, next) => {
-    const user = await UserModel.findByIdAndUpdate(
-      req.params.id,
-      {
-        password: await bcrypt.hash(req.body.password, 12),
-        passLastUpdate: Date.now(),
-      },
-      { new: true }
-    );
+    async (req, res, next) => {
+        const user = await UserModel.findByIdAndUpdate(
+            req.params.id,
+            {
+                password: await bcrypt.hash(req.body.password, 12),
+                passLastUpdate: Date.now(),
+            },
+            {new: true}
+        );
 
-    if (!user) {
-      return next(new ApiError("User not found", 404));
+        if (!user) {
+            return next(new ApiError("User not found", 404));
+        }
+
+        res.status(200).json(user);
     }
-
-    res.status(200).json(user);
-  }
 );
 
 // @desc delete specific user by id
 // @route DELETE /api/users/:id
 // @access Private/Protected [Admin]
 export const deleteUser = factory.deleteDocument(
-  UserModel,
-  "User not found",
-  "User deleted successfully"
+    UserModel,
+    "User not found",
+    "User deleted successfully"
 );
 
 // --------------//
@@ -83,51 +83,51 @@ export const deleteUser = factory.deleteDocument(
 // @route GET /api/users/me
 // @access Private/Protected [User]
 export const getMe = expressAsyncHandler(async (req, res, next) => {
-  req.params.id = req.user._id;
-  next();
+    req.params.id = req.user._id;
+    next();
 });
 
 // @desc Update logged-in user password
 // @route PUT /api/users/myPassword
 // @access Private/Protected [User]
 export const updateMyPass = expressAsyncHandler(async (req, res) => {
-  await UserModel.findByIdAndUpdate(
-    req.user._id,
-    {
-      password: await bcrypt.hash(req.body.password, 12),
-      passLastUpdate: Date.now(),
-    },
-    { new: true }
-  );
+    await UserModel.findByIdAndUpdate(
+        req.user._id,
+        {
+            password: await bcrypt.hash(req.body.password, 12),
+            passLastUpdate: Date.now(),
+        },
+        {new: true}
+    );
 
-  const token = signToken(req.user._id);
+    const token = signToken(req.user._id);
 
-  res.status(200).json({ token });
+    res.status(200).json({token});
 });
 
 // @desc Update logged-in user data
 // @route PUT /api/users/me
 // @access Private/Protected [User]
 export const updateMe = expressAsyncHandler(async (req, res) => {
-  const document = await UserModel.findByIdAndUpdate(
-    req.user._id,
-    {
-      name: req.body.name,
-      email: req.body.email,
-      phone: req.body.phone,
-    },
-    {
-      new: true,
-    }
-  );
+    const document = await UserModel.findByIdAndUpdate(
+        req.user._id,
+        {
+            name: req.body.name,
+            email: req.body.email,
+            phone: req.body.phone,
+        },
+        {
+            new: true,
+        }
+    );
 
-  res.status(200).json(document);
+    res.status(200).json(document);
 });
 
 // @desc delete logged-in user
 // @route DELETE /api/users/me
 // @access Private/Protected [User]
 export const deleteMe = expressAsyncHandler(async (req, res) => {
-  await UserModel.findByIdAndDelete(req.user._id);
-  res.status(204).send();
+    await UserModel.findByIdAndDelete(req.user._id);
+    res.status(204).send();
 });

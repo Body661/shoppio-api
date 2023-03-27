@@ -1,25 +1,25 @@
-import { uuid } from "uuidv4";
+import {uuid} from "uuidv4";
 import sharp from "sharp";
 import expressAsyncHandler from "express-async-handler";
 import CategoryModel from "../models/categoryModel.mjs";
 import * as factory from "../utils/factoryHandler.mjs";
-import { uploadSingle } from "../middlewares/imageUploadMiddleware.mjs";
+import {uploadSingle} from "../middlewares/imageUploadMiddleware.mjs";
 
 export const uploadCatImg = uploadSingle("img");
 export const imageProcessing = expressAsyncHandler(async (req, res, next) => {
-  const filename = `category-${uuid()}-${Date.now()}.png`;
+    const filename = `category-${uuid()}-${Date.now()}.png`;
 
-  if (req.file) {
-    await sharp(req.file.buffer)
-      .resize(600, 600)
-      .toFormat("png")
-      .jpeg({ quality: 90 })
-      .toFile(`uploads/categories/${filename}`);
+    if (req.file) {
+        await sharp(req.file.buffer)
+            .resize(600, 600)
+            .toFormat("png")
+            .png({quality: 90})
+            .toFile(`uploads/categories/${filename}`);
 
-    req.body.img = filename;
-  }
+        req.body.img = filename;
+    }
 
-  next();
+    next();
 });
 
 // @desc Create a new category
@@ -36,23 +36,23 @@ export const getCategories = factory.getAllDocuments(CategoryModel);
 // @route GET /api/categories/:id
 // @access Public
 export const getCategory = factory.getDocument(
-  CategoryModel,
-  "Category not found"
+    CategoryModel,
+    "Category not found"
 );
 
 // @desc Update a category
 // @route GET /api/categories/:id
 // @access Private/Protected [Admin]
 export const updateCategory = factory.updateDocument(
-  CategoryModel,
-  "Category not found"
+    CategoryModel,
+    "Category not found"
 );
 
 // @desc Delete a category
 // @route DELETE /categories/:id
 // @access Private/Protected [Admin]
 export const deleteCategory = factory.deleteDocument(
-  CategoryModel,
-  "Category not found",
-  "Category deleted successfully"
+    CategoryModel,
+    "Category not found",
+    "Category deleted successfully",
 );

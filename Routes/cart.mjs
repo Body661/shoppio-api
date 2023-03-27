@@ -1,18 +1,18 @@
 import express from "express";
 import {
-  addProductToCart,
-  applyCoupon,
-  deleteMyCart,
-  getMyCart,
-  removeItemFromCart,
-  updateItemQuantity,
+    addProductToCart,
+    applyCoupon,
+    deleteMyCart,
+    getMyCart,
+    removeItemFromCart,
+    updateItemQuantity,
 } from "../Controllers/cartController.mjs";
-import { allowed, auth } from "../Controllers/authController.mjs";
+import {allowed, auth} from "../Controllers/authController.mjs";
 import {
-  addProductToCartValidator,
-  applyCouponValidator,
-  removeItemFromCartValidator,
-  updateItemQuantityValidator,
+    addProductToCartValidator,
+    applyCouponValidator,
+    removeItemFromCartValidator,
+    updateItemQuantityValidator,
 } from "./validators/cartValidators.mjs";
 
 const router = express.Router();
@@ -20,14 +20,14 @@ const router = express.Router();
 router.use(auth, allowed("user"));
 
 router
-  .route("/")
-  .post(...addProductToCartValidator, addProductToCart)
-  .get(getMyCart)
-  .delete(deleteMyCart);
+    .route("/")
+    .post(...addProductToCartValidator, addProductToCart)
+    .get(getMyCart)
+    .delete(deleteMyCart);
 router
-  .route("/:id")
-  .delete(...removeItemFromCartValidator, removeItemFromCart)
-  .put(...updateItemQuantityValidator, updateItemQuantity);
+    .route("/:id")
+    .delete(...removeItemFromCartValidator, removeItemFromCart)
+    .put(...updateItemQuantityValidator, updateItemQuantity);
 router.post("/coupon", ...applyCouponValidator, applyCoupon);
 
 export default router;

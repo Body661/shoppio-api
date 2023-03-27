@@ -1,5 +1,4 @@
 import {check} from "express-validator";
-import slugify from "slugify";
 import validatorMiddleware from "../../middlewares/validatorMiddleware.mjs";
 import categoryModel from "../../models/categoryModel.mjs";
 import subcategoryModel from "../../models/subcategoryModel.mjs";
@@ -17,7 +16,6 @@ export const createSubcategoryValidator = [
                 throw new Error("Subcategory name already exists")
             }
 
-            req.body.slug = slugify(value);
             return true;
         }),
     check("categoryId")
@@ -56,7 +54,6 @@ export const updateSubcategoryValidator = [
                 throw new Error("Subcategory name already exists")
             }
 
-            req.body.slug = slugify(value);
             return true;
         }),
     validatorMiddleware,

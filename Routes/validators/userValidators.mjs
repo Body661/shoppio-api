@@ -60,8 +60,8 @@ export const updateUserValidator = [
         .notEmpty()
         .isEmail()
         .withMessage("Email address is not valid")
-        .custom(async (email) => {
-            const user = UserModel.findOne({email: email});
+        .custom(async (email, {req}) => {
+            const user = await UserModel.findOne({email: email ,  _id: {$ne: req.params.id}});
 
             if (user) {
                 throw new Error("Email address already in use");
@@ -171,7 +171,7 @@ export const updateMeValidator = [
         .isEmail()
         .withMessage("Email address is not valid")
         .custom(async (email) => {
-            const user = UserModel.findOne({email: email});
+            const user = await UserModel.findOne({email: email});
 
             if (user) {
                 throw new Error("Email address already in use");

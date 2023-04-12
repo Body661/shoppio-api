@@ -32,5 +32,5 @@ CartSchema.pre(/^find/, function (next) {
     next();
 });
 
-const CartModel = mongoose.model("cart", CartSchema);
+const CartModel = mongoose.model("Cart", CartSchema);
 export default CartModel;

@@ -4,6 +4,7 @@ import UserModel from "../models/userModel.mjs";
 import * as factory from "../utils/factoryHandler.mjs";
 import ApiError from "../utils/apiError.mjs";
 import signToken from "../utils/signJWT.mjs";
+import {sanitizeUser, sanitizeUserProfile} from "../utils/sanitizeData.mjs";
 
 // @desc Create a new user
 // @route POST /api/users
@@ -18,7 +19,15 @@ export const getUsers = factory.getAllDocuments(UserModel);
 // @desc Get specific user by id
 // @route GET /api/users/:id
 // @access Private/Protected [Admin]
-export const getUser = factory.getDocument(UserModel, "User not found");
+export const getUser = expressAsyncHandler(async (req, res, next) => {
+    const doc = await UserModel.findById(req.params.id);
+
+    if (!doc) {
+        return next(new ApiError('User not found', 404));
+    }
+
+    res.status(200).json({data: sanitizeUserProfile(doc)});
+});
 
 // @desc Update specific user by id
 // @route PUT /api/users/:id
@@ -121,7 +130,7 @@ export const updateMe = expressAsyncHandler(async (req, res) => {
         }
     );
 
-    res.status(200).json(document);
+    res.status(200).json(sanitizeUserProfile(document));
 });
 
 // @desc delete logged-in user

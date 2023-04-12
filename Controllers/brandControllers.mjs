@@ -14,7 +14,7 @@ export const imageProcessing = expressAsyncHandler(async (req, res, next) => {
         await sharp(req.file.buffer)
             .resize(600, 600)
             .toFormat("png")
-            .png({quality: 90})
+            .png({quality: 80})
             .toFile(`uploads/brands/${filename}`);
 
         req.body.img = filename;

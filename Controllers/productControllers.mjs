@@ -15,8 +15,9 @@ export const imageProcessing = expressAsyncHandler(async (req, res, next) => {
         const coverFilename = `product-cover-${uuid()}-${Date.now()}.png`;
 
         await sharp(req.files.cover[0].buffer)
+            .resize(600)
             .toFormat("png")
-            .png({quality: 95})
+            .png({quality: 60})
             .toFile(`uploads/products/${coverFilename}`);
 
         req.body.cover = coverFilename;

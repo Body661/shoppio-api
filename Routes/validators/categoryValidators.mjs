@@ -40,7 +40,7 @@ export const updateCategoryValidator = [
         })
         .withMessage("Category name must be between 3 and 32 characters")
         .custom(async (value, {req}) => {
-            const category = await CategoryModel.findOne({name: value});
+            const category = await CategoryModel.findOne({name: value, _id: { $ne: req.params.id } });
 
             if (category) {
                 throw new Error("Category name already in use")

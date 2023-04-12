@@ -54,9 +54,9 @@ export const updateOrderDeliveredValidator = [
 export const checkoutSessionValidator = [
     check("cartId")
         .notEmpty()
-        .withMessage("cart Id is required")
+        .withMessage("Cart Id is required")
         .isMongoId()
-        .withMessage("cart Id is not valid")
+        .withMessage("Cart Id is not valid")
         .custom(async (id) => {
             const cart = await CartModel.findById(id);
 

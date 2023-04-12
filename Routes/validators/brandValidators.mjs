@@ -1,5 +1,6 @@
 import {check} from "express-validator";
 import validatorMiddleware from "../../middlewares/validatorMiddleware.mjs";
+import BrandModel from "../../models/brandModel.mjs";
 
 export const addBrandValidator = [
     (req, res, next) => {
@@ -34,7 +35,16 @@ export const updateBrandValidator = [
             min: 2,
             max: 32,
         })
-        .withMessage("Brand name must be between 2 and 32 characters"),
+        .withMessage("Brand name must be between 2 and 32 characters")
+        .custom(async (value, {req}) => {
+            const brand = await BrandModel.findOne({name: value, _id: {$ne: req.params.id}});
+
+            if (brand) {
+                throw new Error("Brand name already in use")
+            }
+
+            return true;
+        }),
     validatorMiddleware,
 ];
 

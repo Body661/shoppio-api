@@ -66,7 +66,7 @@ const limiter = rateLimit({
 // Apply the rate limiting middleware to all requests
 app.use("/api", limiter);
 
-app.use(hpp({ whitelist: ["price", "sold", "quantity", "ratingsAvg", "category"] }));
+app.use(hpp({ whitelist: ["price", "sold", "quantity", "ratingsAvg", "category", "brand"] }));
 
 mountRoutes(app);
 app.all("*", (req, res, next) => {

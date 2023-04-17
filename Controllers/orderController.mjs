@@ -85,8 +85,13 @@ export const updateOrderPay = expressAsyncHandler(async (req, res, next) => {
         return next(new ApiError("No order found for this id", 404));
     }
 
-    order.isPaid = true;
-    order.paidAt = Date.now();
+    order.isPaid = req.body.isPaid;
+
+    if (req.body.isPaid) {
+        order.paidAt = Date.now();
+    } else {
+        order.paidAt = null;
+    }
 
     await order.save();
     res.status(200).json({data: order});
@@ -103,8 +108,13 @@ export const updateOrderDelivered = expressAsyncHandler(
             return next(new ApiError("No order found for this id", 404));
         }
 
-        order.isDelivered = true;
-        order.deliveredAt = Date.now();
+        order.isDelivered = req.body.isDelivered;
+
+        if (req.body.isDelivered) {
+            order.deliveredAt = Date.now();
+        } else {
+            order.deliveredAt = null;
+        }
 
         await order.save();
         res.status(200).json({data: order});

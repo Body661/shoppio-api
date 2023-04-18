@@ -3,7 +3,8 @@ import validator from "validator";
 import bcrypt from "bcryptjs";
 import {string} from "sharp/lib/is.js";
 
-const UserSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema(
+    {
     name: {
         type: String,
         trim: true,
@@ -66,6 +67,12 @@ const UserSchema = new mongoose.Schema({
             country: String,
         },
     ],
+}, {toJSON: {virtuals: true}, toObject: {virtuals: true}});
+
+UserSchema.virtual("orders", {
+    ref: "Order",
+    foreignField: "user",
+    localField: "_id",
 });
 
 UserSchema.pre("save", async function (next) {

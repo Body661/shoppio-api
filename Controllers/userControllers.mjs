@@ -20,7 +20,7 @@ export const getUsers = factory.getAllDocuments(UserModel);
 // @route GET /api/users/:id
 // @access Private/Protected [Admin]
 export const getUser = expressAsyncHandler(async (req, res, next) => {
-    const doc = await UserModel.findById(req.params.id);
+    const doc = await UserModel.findById(req.params.id).populate("orders")
 
     if (!doc) {
         return next(new ApiError('User not found', 404));

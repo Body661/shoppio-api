@@ -13,6 +13,8 @@ export const sanitizeUserProfile = function (user) {
     name: user.name,
     email: user.email,
     phone: user.phone,
-    role: user.role
+    role: user.role,
+    addresses: user.addresses,
+    orders: user.orders
   };
 };

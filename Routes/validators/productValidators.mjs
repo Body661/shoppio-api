@@ -35,7 +35,7 @@ const duplicateValidators = [
     check("ratingsQuantity")
         .optional()
         .isNumeric()
-        .withMessage("ratingsQuantity must be a number"),
+        .withMessage("ratings quantity must be a number"),
 
     check("subcategories")
         .optional()
@@ -105,7 +105,7 @@ export const createProductValidator = [
     check("priceAfterDiscount")
         .optional()
         .isNumeric()
-        .withMessage("Product priceAfterDiscount must be a number")
+        .withMessage("Product price after discount must be a number")
         .toFloat()
         .custom((value, {req}) => {
             if (req.body.price <= value) {

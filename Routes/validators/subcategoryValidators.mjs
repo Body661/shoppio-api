@@ -48,7 +48,7 @@ export const updateSubcategoryValidator = [
         .isLength({min: 2, max: 32})
         .withMessage("Subcategory name must be between 2 and 32 characters")
         .custom(async (value, {req}) => {
-            const subcategory = await subcategoryModel.findOne({name: value})
+            const subcategory = await subcategoryModel.findOne({name: value, _id: { $ne: req.params.id }})
 
             if (subcategory) {
                 throw new Error("Subcategory name already exists")

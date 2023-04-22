@@ -7,7 +7,7 @@ export const deleteImages = (Model) => expressAsyncHandler(async (req, res, next
 
     if (doc.images && doc.images.length > 0) {
         for (const img of doc.images) {
-            const filePath = img.split('http://localhost:8000')[1];
+            const filePath = img.split(process.env.baseUrl)[1];
             const fullPath = path.join('uploads', filePath);
             await fs.unlink(fullPath, ((err) => {
                 console.log(err);
@@ -16,7 +16,7 @@ export const deleteImages = (Model) => expressAsyncHandler(async (req, res, next
     }
 
     if (doc.cover) {
-        const filePath = doc.cover.split('http://localhost:8000')[1];
+        const filePath = doc.cover.split(process.env.baseUrl)[1];
         const fullPath = path.join('uploads', filePath);
         await fs.unlink(fullPath, ((err) => {
             console.log(err);
@@ -24,7 +24,7 @@ export const deleteImages = (Model) => expressAsyncHandler(async (req, res, next
     }
 
     if (doc.img) {
-        const filePath = doc.img.split('http://localhost:8000')[1];
+        const filePath = doc.img.split(process.env.baseUrl)[1];
         const fullPath = path.join('uploads', filePath);
         await fs.unlink(fullPath, ((err) => {
             console.log(err);

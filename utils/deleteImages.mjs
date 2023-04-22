@@ -1,6 +1,8 @@
 import expressAsyncHandler from "express-async-handler";
 import path from "path";
 import fs from "fs";
+import dotenv from "dotenv";
+dotenv.config({path: "config.env"});
 
 export const deleteImages = (Model) => expressAsyncHandler(async (req, res, next) => {
     const doc = await Model.findById(req.params.id);

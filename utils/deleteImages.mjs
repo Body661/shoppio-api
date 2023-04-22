@@ -1,15 +1,13 @@
 import expressAsyncHandler from "express-async-handler";
 import path from "path";
 import fs from "fs";
-import dotenv from "dotenv";
-dotenv.config({path: "config.env"});
 
 export const deleteImages = (Model) => expressAsyncHandler(async (req, res, next) => {
     const doc = await Model.findById(req.params.id);
 
     if (doc.images && doc.images.length > 0) {
         for (const img of doc.images) {
-            const filePath = img.split(`${process.env.baseUrl}`)[1];
+            const filePath = img.split(process.env.BASE_URL)[1];
             const fullPath = path.join('uploads', filePath);
             await fs.unlink(fullPath, ((err) => {
                 console.log(err);
@@ -18,7 +16,7 @@ export const deleteImages = (Model) => expressAsyncHandler(async (req, res, next
     }
 
     if (doc.cover) {
-        const filePath = doc.cover.split(`${process.env.baseUrl}`)[1];
+        const filePath = doc.cover.split(process.env.BASE_URL)[1];
         const fullPath = path.join('uploads', filePath);
         await fs.unlink(fullPath, ((err) => {
             console.log(err);
@@ -26,7 +24,7 @@ export const deleteImages = (Model) => expressAsyncHandler(async (req, res, next
     }
 
     if (doc.img) {
-        const filePath = doc.img.split(`${process.env.baseUrl}`)[1];
+        const filePath = doc.img.split(process.env.BASE_URL)[1];
         const fullPath = path.join('uploads', filePath);
         await fs.unlink(fullPath, ((err) => {
             console.log(err);

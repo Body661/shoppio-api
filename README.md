@@ -2,6 +2,24 @@
 
 This project's API is a comprehensive e-commerce solution built with Node.js, Express, MongoDB, and various other powerful technologies to provide a secure, robust, and scalable platform. The API enables the handling of users, products, orders, and various other e-commerce functionalities to create a seamless and user-friendly experience.
 
+## Technologies Used
+- Node.js
+- Express
+- MongoDB
+- Mongoose
+- JWT (JSON Web Tokens)
+- Helmet.js
+- Stripe
+- HPP (HTTP Parameter Pollution Protection)
+- Multer
+- Nodemailer
+- Nodemailer-Express-Handlebars
+- XSS-clean
+- Bcrypt.js
+- Sharp
+- CORS (Cross-Origin Resource Sharing)
+- Express-rate-limit
+
 ## Features
 - User authentication and authorization with JWT
 - Secure password hashing with Bcrypt.js

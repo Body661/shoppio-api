@@ -1,4 +1,3 @@
-
 # SHOPPIO API - Nodejs e-commerce API
 
 This project's API is a comprehensive e-commerce solution built with Node.js, Express, MongoDB, and various other powerful technologies to provide a secure, robust, and scalable platform. The API enables the handling of users, products, orders, and various other e-commerce functionalities to create a seamless and user-friendly experience.
@@ -27,68 +26,39 @@ The API follows a clear and organized directory structure to ensure maintainabil
 - `Utils`: Contains a set of utility functions that are used across multiple components, such as error handling and response formatting.
 ## Run Locally
 
-Clone the project
+1- Clone the project
 
 ```bash
   git clone https://github.com/Body661/nodejs-ecommerce-api.git
 ```
 
-Go to the project directory
+2- Go to the project directory
 
 ```bash
   cd nodejs-ecommerce-api
 ```
 
-Install dependencies
+3- Install dependencies
 
 ```bash
   npm install
 ```
 
-Set up environment variables
+4- Set up environment variables
 
 To configure the API with the necessary environment variables, follow these steps:
 
 - Locate the example.env file in the root directory of the project.
 - Make a copy of the example.env file and rename it to config.env.
-- Open the config.env file and populate it with the required variables, as described below:
+- Open the config.env file and populate it with the required variables.
 
-```bash
-PORT=8000
-NODE_ENV=development
-BASE_URL=http://localhost:8000
-
-# Database
-DB_USER=YOUR_DB_USER
-DB_PASSWORD=YOUR_DB_PASSWORD
-DB_NAME=YOUR_DB_NAME
-DB_URL=YOUR_DB_URL
-
-# JWT
-SECRET_KEY=YOUR_SECRET_KEY
-
-# Email
-EMAIL_HOST=YOUR_EMAIL_HOST
-EMAIL_PORT=YOUR_EMAIL_PORT
-EMAIL_SECURE=YOUR_EMAIL_SECURE
-EMAIL_USER=YOUR_EMAIL_USER
-EMAIL_PASSWORD=YOUR_EMAIL_PASSWORD
-
-# Stripe
-STRIPE_SECRET_KEY=YOUR_STRIPE_SECRET_KEY
-STRIPE_WEBHOOK_SECRET=YOUR_STRIPE_WEBHOOK_SECRET
-
-FRONTEND_URL=YOUR_FRONTEND_URL
-
-```
-
-Start the development server:
+5- Start the development server:
 
 ```bash
   npm run dev
 ```
 
-Access the API at:
+6- Access the API at:
 
 ```bash
   http://localhost:8000/api/
@@ -96,3 +66,12 @@ Access the API at:
 ## API Reference
 
 For detailed information on API endpoints, request/response formats, and available features, please refer to the API documentation, available [here](https://documenter.getpostman.com/view/24970774/2s93eR5vuu#2cda6e05-3dad-4adb-b96e-4b8bf94e0e16).
+## Authors
+
+- [@Abdolrahman Saleh El Hagrasy](https://www.github.com/body661)
+
+
+## Feedback
+
+If you have any feedback, please reach out to us at elhagrasy@codenetinc.com
+

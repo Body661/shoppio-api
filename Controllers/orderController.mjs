@@ -150,7 +150,7 @@ export const checkoutSession = expressAsyncHandler(async (req, res, next) => {
             },
         ],
         mode: "payment",
-        success_url: `${process.env.FRONTEND_URL}/user/orders`,
+        success_url: `${process.env.FRONTEND_URL}/cart/order-received`,
         cancel_url: `${process.env.FRONTEND_URL}/cart`,
         customer_email: req.user.email,
         client_reference_id: req.params.cartId,

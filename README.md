@@ -47,13 +47,13 @@ The API follows a clear and organized directory structure to ensure maintainabil
 1- Clone the project
 
 ```bash
-  git clone https://github.com/Body661/nodejs-ecommerce-api.git
+  git clone https://github.com/Body661/shoppio-api.git
 ```
 
 2- Go to the project directory
 
 ```bash
-  cd nodejs-ecommerce-api
+  cd shoppio-api
 ```
 
 3- Install dependencies

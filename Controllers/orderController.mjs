@@ -122,92 +122,98 @@ export const updateOrderDelivered = expressAsyncHandler(
 );
 
 // @desc    Checkout stripe session
-// @route   GET /api/orders/checkout/cartId
+// @route   POST /api/orders/checkout/cartId
 // @access  Private/Protected [User]
 export const checkoutSession = expressAsyncHandler(async (req, res, next) => {
-    const cart = await CartModel.findOne({
-        _id: req.params.cartId,
-        user: req.user._id,
-    });
+    try {
+        const userId = req.user._id;
+        const cartId = req.params.cartId;
+        const cartDetails = await CartModel.findOne({_id: cartId, user: userId});
 
-    if (!cart) {
-        return next(new ApiError("No cart found for this id", 404));
-    }
+        if (!cartDetails) {
+            return next(new ApiError("No cart found for this user and cart id", 404));
+        }
 
-    const price = cart.totalPriceAfterDiscount ? cart.totalPriceAfterDiscount : cart.totalCartPrice
-
-    const session = await stripe.checkout.sessions.create({
-        line_items: [
-            {
-                price_data: {
-                    unit_amount: Math.round(price * 100),
-                    currency: "eur",
-                    product_data: {
-                        name: req.user.name,
+        const totalPrice = cartDetails.totalPriceAfterDiscount || cartDetails.totalCartPrice;
+        const session = await stripe.checkout.sessions.create({
+            line_items: [
+                {
+                    price_data: {
+                        unit_amount: Math.round(totalPrice * 100),
+                        currency: "eur",
+                        product_data: {
+                            name: req.user.name,
+                        },
                     },
+                    quantity: 1,
                 },
-                quantity: 1,
-            },
-        ],
-        mode: "payment",
-        success_url: `${process.env.FRONTEND_URL}/cart/order-received`,
-        cancel_url: `${process.env.FRONTEND_URL}/cart`,
-        customer_email: req.user.email,
-        client_reference_id: req.params.cartId,
-        metadata: req.body.shippingAddress,
-    });
+            ],
+            mode: "payment",
+            success_url: `${process.env.FRONTEND_URL}/cart/order-received`,
+            cancel_url: `${process.env.FRONTEND_URL}/cart`,
+            customer_email: req.user.email,
+            client_reference_id: cartId,
+            metadata: req.body.shippingAddress,
+        });
 
-    res.status(200).json({session});
+        res.status(200).json({session});
+    } catch (error) {
+        next(error);
+    }
 });
 
 const createOrder = async (session) => {
-    const cartId = session.client_reference_id;
-    const shippingAddress = session.metadata;
-    const price = session.amount_total / 100;
+    try {
+        const cartId = session.client_reference_id;
+        const shippingAddress = session.metadata;
+        const price = session.amount_total / 100;
+        const user = await UserModel.findOne({email: session.customer_email});
+        const cart = await CartModel.findById(cartId);
 
-    const cart = await CartModel.findById(cartId);
-    const user = await UserModel.findOne({email: session.customer_email});
+        if (!user) {
+            throw new Error("User not found");
+        }
 
-    const order = await OrderModel.create({
-        user: user._id,
-        cartItems: cart.cartItems,
-        shippingAddress,
-        totalOrderPrice: price,
-        paymentMethodType: "card",
-        isPaid: true,
-        paidAt: Date.now(),
-    });
+        if (!cart) {
+            throw new Error("Cart not found");
+        }
 
-    if (order) {
-        const bulkOptions = cart.cartItems.map((item) => ({
-            updateOne: {
-                filter: {_id: item.product},
-                update: {$inc: {quantity: -item.quantity, sold: +item.quantity}},
-            },
-        }));
-        await ProductModel.bulkWrite(bulkOptions, {});
+        const order = await OrderModel.create({
+            user: user._id,
+            cartItems: cart.cartItems,
+            shippingAddress,
+            totalOrderPrice: price,
+            paymentMethodType: "card",
+            isPaid: true,
+            paidAt: Date.now(),
+        });
 
-        await CartModel.findByIdAndDelete(cartId);
+        if (order) {
+            const bulkOptions = cart.cartItems.map((item) => ({
+                updateOne: {
+                    filter: {_id: item.product},
+                    update: {$inc: {quantity: -item.quantity, sold: item.quantity}},
+                },
+            }));
+            await ProductModel.bulkWrite(bulkOptions);
+            await CartModel.findByIdAndDelete(cartId);
+        }
+    } catch (error) {
+        throw new Error("Failed to create order");
     }
 };
 
 export const webhookCheckout = expressAsyncHandler(async (req, res, next) => {
-    const sig = req.headers["stripe-signature"];
-
-    let event;
     try {
-        event = stripe.webhooks.constructEvent(
-            req.body,
-            sig,
-            process.env.STRIPE_WEBHOOK_SECRET
-        );
-    } catch (err) {
-        return res.status(400).send(`Webhook Error: ${err.message}`);
-    }
+        const sig = req.headers["stripe-signature"];
+        const event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
 
-    if (event.type === "checkout.session.completed") {
-        createOrder(event.data.object);
-    }
+        if (event.type === "checkout.session.completed") {
+            const order = await createOrder(event.data.object);
+            res.status(201).json({received: true});
+        }
 
-    res.status(201).json({received: true});
+    } catch (error) {
+        next(new ApiError(`Webhook error: ${error.message}`, 400));
+    }
 });

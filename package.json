@@ -1,13 +1,13 @@
 {
-  "name": "nodejs-ecommerce-api",
+  "name": "shoppio-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.mjs",
   "scripts": {
     "dev": "nodemon server.mjs",
     "start": "NODE_ENV=production node server.mjs"
   },
-  "author": "",
+  "author": "Abdolrahman Saleh El Hagrasy",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",

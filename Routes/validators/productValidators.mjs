@@ -109,7 +109,7 @@ export const createProductValidator = [
         .toFloat()
         .custom((value, {req}) => {
             if (req.body.price <= value) {
-                throw new Error("priceAfterDiscount must be lower than price");
+                throw new Error("price after discount must be lower than price");
             }
             return true;
         }),
@@ -166,11 +166,11 @@ export const updateProductValidator = [
     check("priceAfterDiscount")
         .optional()
         .isNumeric()
-        .withMessage("Product priceAfterDiscount must be a number")
+        .withMessage("Product price after discount must be a number")
         .toFloat()
         .custom(async (value, {req}) => {
             const product = await ProductModel.findById(req.params.id);
-            if (product.price <= value) {
+            if (req.body.price <= value) {
                 return Promise.reject(
                     new Error("priceAfterDiscount must be lower than price")
                 );

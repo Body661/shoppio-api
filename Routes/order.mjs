@@ -15,7 +15,7 @@ const router = express.Router();
 
 router.use(auth);
 
-router.get("/checkout/:cartId", allowed("user"), checkoutSession);
+router.post("/checkout/:cartId", allowed("user"), checkoutSession);
 
 router.route("/:cartId").post(allowed("user"), createCashOrder);
 router

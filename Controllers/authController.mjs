@@ -27,9 +27,9 @@ export const signup = expressAsyncHandler(async (req, res) => {
         template: "welcoming",
         context: {
             name: user.name,
-            action_url: "www.google.com",
-            support_email: "examen.project.ecommerce@gmail.com",
-            help_url: "www.google.com",
+            action_url: "https://shoppio.vercel.app/",
+            support_email: "shoppio.app@gmail.com",
+            help_url: "https://shoppio.vercel.app/",
         },
     });
 
@@ -103,19 +103,17 @@ export const forgetPassword = expressAsyncHandler(async (req, res, next) => {
     }
 
     const code = Math.floor(100000 + Math.random() * 900000).toString();
-    const hashedResetCode = crypto
+    user.passResetCode = crypto
         .createHash("sha256")
         .update(code)
         .digest("hex");
-
-    user.passResetCode = hashedResetCode;
     user.passResetExpires = Date.now() + 15 * 60 * 1000;
     user.passResetVerified = false;
 
     await user.save();
 
     try {
-        sendEmail({
+        await sendEmail({
             email: user.email,
             subject: "Password reset code",
             template: "resetPass",
@@ -178,7 +176,7 @@ export const resetPassword = expressAsyncHandler(async (req, res, next) => {
     user.passResetVerified = undefined;
     await user.save();
 
-    sendEmail({
+    await sendEmail({
         email: user.email,
         subject: "Password changed",
         template: "passChanged",

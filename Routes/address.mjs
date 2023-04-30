@@ -11,7 +11,7 @@ import {
     removeAddressValidator,
     updateAddressValidators,
 } from "./validators/addressValidators.mjs";
-import {allowed, auth} from "../Controllers/authController.mjs";
+import {allowed, auth} from "../controllers/authController.mjs";
 
 // Initialize the router
 const router = express.Router();

@@ -7,14 +7,14 @@ import {
     uploadBrandImg,
     imageProcessing,
     updateBrand,
-} from "../Controllers/brandControllers.mjs";
+} from "../controllers/brandControllers.mjs";
 import {
     addBrandValidator,
     deleteBrandValidator,
     getBrandValidator,
     updateBrandValidator,
 } from "./validators/brandValidators.mjs";
-import {allowed, auth} from "../Controllers/authController.mjs";
+import {allowed, auth} from "../controllers/authController.mjs";
 import {deleteImages} from "../utils/deleteImages.mjs";
 import BrandModel from "../models/brandModel.mjs";
 

@@ -8,8 +8,8 @@ import {
     getOrder,
     updateOrderDelivered,
     updateOrderPay,
-} from "../Controllers/orderController.mjs";
-import {allowed, auth} from "../Controllers/authController.mjs";
+} from "../controllers/orderController.mjs";
+import {allowed, auth} from "../controllers/authController.mjs";
 
 const router = express.Router();
 

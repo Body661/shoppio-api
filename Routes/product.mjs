@@ -7,14 +7,14 @@ import {
     imageProcessing,
     updateProduct,
     uploadProductImgs,
-} from "../Controllers/productControllers.mjs";
+} from "../controllers/productControllers.mjs";
 import {
     createProductValidator,
     deleteProductValidator,
     getProductValidator,
     updateProductValidator,
 } from "./validators/productValidators.mjs";
-import {allowed, auth} from "../Controllers/authController.mjs";
+import {allowed, auth} from "../controllers/authController.mjs";
 import reviewRoutes from "./review.mjs";
 import {deleteImages} from "../utils/deleteImages.mjs";
 import ProductModel from "../models/productModel.mjs";

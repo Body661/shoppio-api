@@ -7,7 +7,7 @@ import {
     imageProcessing,
     updateCategory,
     uploadCatImg,
-} from "../Controllers/categoryControllers.mjs";
+} from "../controllers/categoryControllers.mjs";
 
 import {
     createCategoryValidator,
@@ -18,7 +18,7 @@ import {
 
 import subcategoryRoutes from "./subcategory.mjs";
 
-import {allowed, auth} from "../Controllers/authController.mjs";
+import {allowed, auth} from "../controllers/authController.mjs";
 import {deleteImages} from "../utils/deleteImages.mjs";
 import CategoryModel from "../models/categoryModel.mjs";
 

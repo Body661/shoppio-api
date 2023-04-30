@@ -6,7 +6,7 @@ import {
     getSubcategories,
     getSubcategory,
     updateSubcategory,
-} from "../Controllers/subcategoryControllers.mjs";
+} from "../controllers/subcategoryControllers.mjs";
 
 import {
     createSubcategoryValidator,
@@ -14,7 +14,7 @@ import {
     getSubcategoryValidator,
     updateSubcategoryValidator,
 } from "./validators/subcategoryValidators.mjs";
-import {allowed, auth} from "../Controllers/authController.mjs";
+import {allowed, auth} from "../controllers/authController.mjs";
 
 const router = express.Router({mergeParams: true});
 

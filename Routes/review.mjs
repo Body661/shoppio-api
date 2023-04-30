@@ -7,9 +7,9 @@ import {
     updateReview,
     createFilterObj,
     setProdIdAndUser,
-} from "../Controllers/reviewControllers.mjs";
+} from "../controllers/reviewControllers.mjs";
 
-import {allowed, auth} from "../Controllers/authController.mjs";
+import {allowed, auth} from "../controllers/authController.mjs";
 import {
     addReviewValidator,
     deleteReviewValidator,

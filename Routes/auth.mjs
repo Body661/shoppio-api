@@ -14,7 +14,7 @@ import {
     resetPassword,
     signup,
     verifyPassResetCode,
-} from "../Controllers/authController.mjs";
+} from "../controllers/authController.mjs";
 
 // Initialize the router
 const router = express.Router();

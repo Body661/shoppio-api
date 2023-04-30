@@ -6,8 +6,8 @@ import {
     getMyCart,
     removeItemFromCart,
     updateItemQuantity,
-} from "../Controllers/cartController.mjs";
-import {allowed, auth} from "../Controllers/authController.mjs";
+} from "../controllers/cartController.mjs";
+import {allowed, auth} from "../controllers/authController.mjs";
 import {
     addProductToCartValidator,
     applyCouponValidator,

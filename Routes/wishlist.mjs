@@ -1,10 +1,10 @@
 import express from "express";
-import {allowed, auth} from "../Controllers/authController.mjs";
+import {allowed, auth} from "../controllers/authController.mjs";
 import {
     addToWishlist,
     getWishlist,
     removeFromWishlist,
-} from "../Controllers/wishlistCntroller.mjs";
+} from "../controllers/wishlistCntroller.mjs";
 import {addRemoveValidators} from "./validators/wishlistValidators.mjs";
 
 const router = express.Router();

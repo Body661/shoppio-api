@@ -14,7 +14,7 @@ import dbConnect from "./config/db.mjs";
 import ApiError from "./utils/apiError.mjs";
 import errorMiddleware from "./middlewares/errorMiddleware.mjs";
 import mountRoutes from "./Routes/index.mjs";
-import { webhookCheckout } from "./Controllers/orderController.mjs";
+import { webhookCheckout } from "./controllers/orderController.mjs";
 
 dotenv.config({ path: "config.env" });
 

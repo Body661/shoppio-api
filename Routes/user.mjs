@@ -10,7 +10,7 @@ import {
     updateMyPass,
     updateUser,
     updateUserPassword,
-} from "../Controllers/userControllers.mjs";
+} from "../controllers/userControllers.mjs";
 import {
     addUserValidator,
     deleteUserValidator,
@@ -20,7 +20,7 @@ import {
     updateUserPassValidator,
     updateUserValidator,
 } from "./validators/userValidators.mjs";
-import {allowed, auth} from "../Controllers/authController.mjs";
+import {allowed, auth} from "../controllers/authController.mjs";
 
 const router = express.Router();
 

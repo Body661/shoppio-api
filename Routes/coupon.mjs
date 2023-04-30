@@ -1,12 +1,12 @@
 import express from "express";
-import {allowed, auth} from "../Controllers/authController.mjs";
+import {allowed, auth} from "../controllers/authController.mjs";
 import {
     addCoupon,
     deleteCoupon,
     getCoupon,
     getCoupons,
     updateCoupon,
-} from "../Controllers/couponController.mjs";
+} from "../controllers/couponController.mjs";
 import {
     addCouponValidator,
     updateCouponValidator,

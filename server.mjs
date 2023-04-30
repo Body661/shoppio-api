@@ -22,11 +22,8 @@ dotenv.config({ path: "config.env" });
 const app = express();
 
 // Set up basic security and CORS options for the app
-app.use(cors({
-  origin: 'https://shoppio.vercel.app/',
-  credentials: true,
-  optionSuccessStatus: 200
-}));
+app.use(cors());
+app.options("*", cors());
 
 app.use(compression());
 app.use(helmet({

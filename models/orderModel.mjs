@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
 
+// Define the Order schema
 const OrderSchema = new mongoose.Schema(
     {
         user: {
             type: mongoose.Schema.ObjectId,
             ref: "User",
-            required: [true, "Order must be belong to user"],
+            required: [true, "Order must belong to a user"],
         },
         cartItems: [
             {
@@ -18,7 +19,6 @@ const OrderSchema = new mongoose.Schema(
                 price: Number,
             },
         ],
-
         taxPrice: {
             type: Number,
             default: 0,
@@ -52,12 +52,13 @@ const OrderSchema = new mongoose.Schema(
         },
         deliveredAt: Date,
     },
-    {timestamps: true}
+    { timestamps: true }
 );
 
+// Pre-find hook to populate the user and cartItems fields
 OrderSchema.pre(/^find/, function (next) {
     this.populate([
-        {path: "user", select: "name email phone"},
+        { path: "user", select: "name email phone" },
         {
             path: "cartItems.product",
         },
@@ -65,5 +66,7 @@ OrderSchema.pre(/^find/, function (next) {
     next();
 });
 
+// Create the Order model using the Order schema
 const OrderModel = mongoose.model("Order", OrderSchema);
+
 export default OrderModel;

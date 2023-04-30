@@ -3,22 +3,22 @@ import bcrypt from "bcryptjs";
 import UserModel from "../models/userModel.mjs";
 import * as factory from "../utils/factoryHandler.mjs";
 import ApiError from "../utils/apiError.mjs";
-import signToken from "../utils/signJWT.mjs";
+import {encodeUser, signToken} from "../utils/signJWT.mjs";
 import {sanitizeUser, sanitizeUserProfile} from "../utils/sanitizeData.mjs";
 
-// @desc Create a new user
-// @route POST /api/users
-// @access Private/Protected [Admin]
+// Action for creating a new user
+// @Route POST /api/users
+// @Access Private/Protected [Admin]
 export const addUser = factory.createDocument(UserModel);
 
-// @desc Get all users
-// @route GET /api/users
-// @access Private/Protected [Admin]
+// Action for getting all users
+// @Route GET /api/users
+// @Access Private/Protected [Admin]
 export const getUsers = factory.getAllDocuments(UserModel);
 
-// @desc Get specific user by id
-// @route GET /api/users/:id
-// @access Private/Protected [Admin]
+// Action for getting a specific user by ID
+// @Route GET /api/users/:id
+// @Access Private/Protected [Admin]
 export const getUser = expressAsyncHandler(async (req, res, next) => {
     const doc = await UserModel.findById(req.params.id).populate("orders")
 
@@ -29,9 +29,9 @@ export const getUser = expressAsyncHandler(async (req, res, next) => {
     res.status(200).json({data: sanitizeUserProfile(doc)});
 });
 
-// @desc Update specific user by id
-// @route PUT /api/users/:id
-// @access Private/Protected [Admin]
+// Action for updating a specific user by ID
+// @Route PUT /api/users/:id
+// @Access Private/Protected [Admin]
 export const updateUser = expressAsyncHandler(async (req, res, next) => {
     const document = await UserModel.findByIdAndUpdate(
         req.params.id,
@@ -53,16 +53,16 @@ export const updateUser = expressAsyncHandler(async (req, res, next) => {
     res.status(200).json(document);
 });
 
-// @desc Update user password by id
-// @route PUT /api/users/changePassword/:id
-// @access Private/Protected [Admin]
+// Action for updating a user password by ID
+// @Route PUT /api/users/change-password/:id
+// @Access Private/Protected [Admin]
 export const updateUserPassword = expressAsyncHandler(
     async (req, res, next) => {
         const user = await UserModel.findByIdAndUpdate(
             req.params.id,
             {
                 password: await bcrypt.hash(req.body.password, 12),
-                passLastUpdate: Date.now(),
+                passwordLastUpdate: Date.now(),
             },
             {new: true}
         );
@@ -75,30 +75,26 @@ export const updateUserPassword = expressAsyncHandler(
     }
 );
 
-// @desc delete specific user by id
-// @route DELETE /api/users/:id
-// @access Private/Protected [Admin]
+// Action for deleting a specific user by ID
+// @Route DELETE /api/users/:id
+// @Access Private/Protected [Admin]
 export const deleteUser = factory.deleteDocument(
     UserModel,
     "User not found",
     "User deleted successfully"
 );
 
-// --------------//
-// USER ROUTES //
-// --------------//
-
-// @desc Get logged-in user data
-// @route GET /api/users/me
-// @access Private/Protected [User]
+// Action for getting the logged-in user's data
+// @Route GET /api/users/me
+// @Access Private/Protected [User]
 export const getMe = expressAsyncHandler(async (req, res, next) => {
     req.params.id = req.user._id;
     next();
 });
 
-// @desc Update logged-in user password
-// @route PUT /api/users/myPassword
-// @access Private/Protected [User]
+// Action for updating the logged-in user's password
+// @Route PUT /api/users/my-password
+// @Access Private/Protected [User]
 export const updateMyPass = expressAsyncHandler(async (req, res) => {
     await UserModel.findByIdAndUpdate(
         req.user._id,
@@ -114,9 +110,9 @@ export const updateMyPass = expressAsyncHandler(async (req, res) => {
     res.status(200).json({token});
 });
 
-// @desc Update logged-in user data
-// @route PUT /api/users/me
-// @access Private/Protected [User]
+// Action for updating the logged-in user's data
+// @Route PUT /api/users/me
+// @Access Private/Protected [User]
 export const updateMe = expressAsyncHandler(async (req, res) => {
     const document = await UserModel.findByIdAndUpdate(
         req.user._id,
@@ -130,12 +126,12 @@ export const updateMe = expressAsyncHandler(async (req, res) => {
         }
     );
 
-    res.status(200).json(sanitizeUserProfile(document));
+    res.status(200).json(encodeUser(sanitizeUser(document)));
 });
 
-// @desc delete logged-in user
-// @route DELETE /api/users/me
-// @access Private/Protected [User]
+// Action for deleting the logged-in user
+// @Route DELETE /api/users/me
+// @Access Private/Protected [User]
 export const deleteMe = expressAsyncHandler(async (req, res) => {
     await UserModel.findByIdAndDelete(req.user._id);
     res.status(204).send();

@@ -2,7 +2,7 @@ import express from "express";
 import {
     addBrand,
     deleteBrand,
-    getBrand,
+    getBrandById,
     getBrands,
     uploadBrandImg,
     imageProcessing,
@@ -34,7 +34,7 @@ router
 
 router
     .route("/:id")
-    .get(...getBrandValidator, getBrand)
+    .get(...getBrandValidator, getBrandById)
     .put(
         auth,
         allowed("admin"),

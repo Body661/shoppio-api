@@ -62,25 +62,28 @@ const ProductSchema = new mongoose.Schema(
             default: 0,
         },
     },
-    {timestamps: true, toJSON: {virtuals: true}, toObject: {virtuals: true}}
+    { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
+// Define virtual field for reviews
 ProductSchema.virtual("reviews", {
     ref: "Review",
     foreignField: "product",
     localField: "_id",
 });
 
+// Pre-find hook to populate category, subcategories, and brand fields
 ProductSchema.pre(/^find/, function (next) {
     this.populate([
-        {path: "category", select: "name"},
-        {path: "subcategories", select: "name"},
-        {path: "brand", select: "name"},
+        { path: "category", select: "name" },
+        { path: "subcategories", select: "name" },
+        { path: "brand", select: "name" },
     ]);
 
     next();
 });
 
+// Helper function to set image URLs
 const setImgUrl = (doc) => {
     if (doc.cover) {
         doc.cover = `${process.env.BASE_URL}/products/${doc.cover}`;
@@ -96,6 +99,8 @@ const setImgUrl = (doc) => {
         doc.images = images;
     }
 };
+
+// Post-init and post-save hooks to update image URLs
 ProductSchema.post("init", (doc) => {
     setImgUrl(doc);
 });
@@ -104,5 +109,7 @@ ProductSchema.post("save", (doc) => {
     setImgUrl(doc);
 });
 
+// Create the Product model using the Product schema
 const ProductModel = mongoose.model("Product", ProductSchema);
+
 export default ProductModel;

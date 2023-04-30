@@ -17,7 +17,7 @@ const calcTotalCartPrice = (cart) => {
     cart.totalPriceAfterDiscount = undefined;
 };
 
-// @desc Add product to cart
+// Action for adding product to cart
 // @route POST /api/cart
 // @access Private/Protected [User]
 export const addProductToCart = expressAsyncHandler(async (req, res, next) => {
@@ -26,6 +26,10 @@ export const addProductToCart = expressAsyncHandler(async (req, res, next) => {
 
     if (!product) {
         return next(new ApiError("Product not found", 404));
+    }
+
+    if(product && product.quantity <= 0) {
+        return next(new ApiError("Product not available", 400));
     }
 
     let cart = await CartModel.findOne({user: req.user._id});
@@ -67,15 +71,15 @@ export const addProductToCart = expressAsyncHandler(async (req, res, next) => {
     res.status(200).json({message: "Product added to cart", data: cart});
 });
 
-// @desc Get logged user cart
+// Action for get logged user cart
 // @route GET /api/cart
 // @access Private/Protected [User]
 export const getMyCart = expressAsyncHandler(async (req, res) => {
     const cart = await CartModel.findOne({user: req.user._id});
-    res.status(200).json({data: cart});
+    res?.status(200).json({data: cart});
 });
 
-// @desc remove item from cart
+// Action for removing item from cart
 // @route DELETE /api/cart/:id
 // @access Private/Protected [User]
 export const removeItemFromCart = expressAsyncHandler(async (req, res) => {
@@ -93,7 +97,7 @@ export const removeItemFromCart = expressAsyncHandler(async (req, res) => {
     res.status(200).json({data: cart});
 });
 
-// @desc Clear cart
+// Action for deleting cart
 // @route DELETE /api/cart/
 // @access Private/Protected [User]
 export const deleteMyCart = expressAsyncHandler(async (req, res) => {
@@ -101,7 +105,7 @@ export const deleteMyCart = expressAsyncHandler(async (req, res) => {
     res.status(204).json();
 });
 
-// @desc Update item quantity
+// Action for update item quantity in cart
 // @route PUT /api/cart/:id
 // @access Private/Protected [User]
 export const updateItemQuantity = expressAsyncHandler(
@@ -141,7 +145,7 @@ export const updateItemQuantity = expressAsyncHandler(
     }
 );
 
-// @desc Apply coupon to cart
+// Action for applying coupon to cart
 // @route PUT /api/cart/coupon
 // @access Private/Protected [User]
 export const applyCoupon = expressAsyncHandler(async (req, res, next) => {

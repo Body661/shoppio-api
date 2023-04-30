@@ -4,11 +4,11 @@ import CategoryModel from "../../models/categoryModel.mjs";
 import SubcategoryModel from "../../models/subcategoryModel.mjs";
 import ProductModel from "../../models/productModel.mjs";
 
-const duplicateValidators = [
+const commonValidators = [
     check("sold")
         .optional()
         .isNumeric()
-        .withMessage("Product quantity must be a number"),
+        .withMessage("Sold quantity must be a number"),
 
     check("colors")
         .optional()
@@ -94,7 +94,9 @@ export const createProductValidator = [
         .notEmpty()
         .withMessage("Product quantity is required")
         .isNumeric()
-        .withMessage("Product quantity must be a number"),
+        .withMessage("Product quantity must be a number")
+        .isFloat({min: 1})
+        .withMessage("Product quantity must be bigger than or equal to 1"),
     check("price")
         .notEmpty()
         .withMessage("Product price is required")
@@ -127,7 +129,7 @@ export const createProductValidator = [
                 );
             }
         }),
-    ...duplicateValidators,
+    ...commonValidators,
     validatorMiddleware,
 ];
 
@@ -154,7 +156,9 @@ export const updateProductValidator = [
         .notEmpty()
         .withMessage("Product quantity is required")
         .isNumeric()
-        .withMessage("Product quantity must be a number"),
+        .withMessage("Product quantity must be a number")
+        .isFloat({min: 1})
+        .withMessage("Product quantity must be bigger than or equal to 1"),
     check("price")
         .optional()
         .notEmpty()
@@ -172,7 +176,7 @@ export const updateProductValidator = [
             const product = await ProductModel.findById(req.params.id);
             if (req.body.price <= value) {
                 return Promise.reject(
-                    new Error("priceAfterDiscount must be lower than price")
+                    new Error("price after discount must be lower than price")
                 );
             }
         }),
@@ -195,7 +199,7 @@ export const updateProductValidator = [
                 );
             }
         }),
-    ...duplicateValidators,
+    ...commonValidators,
     validatorMiddleware,
 ];
 

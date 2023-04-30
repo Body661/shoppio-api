@@ -6,20 +6,20 @@ import {
     loginValidators,
     resetPasswordValidators,
     signupValidators,
-    verfiyPassResetCodeValidators,
+    verifyPassResetCodeValidators,
 } from "./validators/authValidators.mjs";
 import {
-    auth,
-    checkRoles,
-    forgetPassword,
+    forgotPassword,
     login,
     resetPassword,
     signup,
     verifyPassResetCode,
 } from "../Controllers/authController.mjs";
 
+// Initialize the router
 const router = express.Router();
 
+// Rate limiting for password reset requests
 const passwordResetLimiter = rateLimit({
     windowMs: 60 * 60 * 1000,
     max: 5,
@@ -29,6 +29,7 @@ const passwordResetLimiter = rateLimit({
         "Too many Requests created from this IP, please try again after 1 hour",
 });
 
+// Rate limiting for account creation
 const createAccountLimiter = rateLimit({
     windowMs: 180 * 60 * 1000,
     max: 5,
@@ -38,24 +39,33 @@ const createAccountLimiter = rateLimit({
     legacyHeaders: false,
 });
 
+// Route for signing up with rate limiting and validation
 router.post("/signup", createAccountLimiter, ...signupValidators, signup);
+
+// Route for logging in with validation
 router.post("/login", ...loginValidators, login);
+
+// Route for forgot password with rate limiting and validation
 router.post(
-    "/forgetPassword",
+    "/forgot-password",
     passwordResetLimiter,
     ...forgotPasswordValidators,
-    forgetPassword
+    forgotPassword
 );
+
+// Route for verifying password reset code with validation
 router.post(
-    "/verifyPassResetCode",
-    ...verfiyPassResetCodeValidators,
+    "/verify-password-reset-code",
+    ...verifyPassResetCodeValidators,
     verifyPassResetCode
 );
+
+// Route for resetting password with rate limiting and validation
 router.put(
-    "/resetPassword",
+    "/reset-password",
     passwordResetLimiter,
     ...resetPasswordValidators,
     resetPassword
 );
-router.get('/checkRoles', auth, checkRoles)
+
 export default router;

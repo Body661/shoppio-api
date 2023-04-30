@@ -2,9 +2,9 @@ import expressAsyncHandler from "express-async-handler";
 import UserModel from "../models/userModel.mjs";
 import * as factory from "../utils/factoryHandler.mjs";
 
-// @desc Add product to wishlist
-// @route POST /api/wishlist
-// @access Private/Protected [User]
+// Action for adding a product to the wishlist
+// @Route POST /api/wishlist
+// @Access Private/Protected [User]
 export const addToWishlist = expressAsyncHandler(async (req, res) => {
     const user = await UserModel.findByIdAndUpdate(
         req.user._id,
@@ -20,9 +20,9 @@ export const addToWishlist = expressAsyncHandler(async (req, res) => {
     });
 });
 
-// @desc Delete product from wishlist
-// @route DELETE /api/wishlist/:productId
-// @access Private/Protected [User]
+// Action for deleting a product from the wishlist
+// @Route DELETE /api/wishlist/:productId
+// @Access Private/Protected [User]
 export const removeFromWishlist = expressAsyncHandler(async (req, res) => {
     const user = await UserModel.findByIdAndUpdate(
         req.user._id,
@@ -38,9 +38,9 @@ export const removeFromWishlist = expressAsyncHandler(async (req, res) => {
     });
 });
 
-// @desc Get legged user wishlist
-// @route GET /api/wishlist
-// @access Private/Protected [User]
+// Action for getting the logged-in user's wishlist
+// @Route GET /api/wishlist
+// @Access Private/Protected [User]
 export const getWishlist = expressAsyncHandler(async (req, res) => {
     const user = await UserModel.findById(req.user._id).populate("wishlist");
 

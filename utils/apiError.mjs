@@ -1,4 +1,4 @@
-// @desc This class is responsible for creating error messages
+// This class is responsible for creating error messages
 class ApiError extends Error {
   constructor(message, statusCode) {
     super(message);

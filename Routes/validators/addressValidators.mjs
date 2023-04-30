@@ -1,11 +1,11 @@
-import {check} from "express-validator";
+import { check } from "express-validator";
 import validatorMiddleware from "../../middlewares/validatorMiddleware.mjs";
 
 export const addAddressValidators = [
     check("alias")
         .notEmpty()
         .withMessage("Alias is required")
-        .custom(async (alias, {req}) => {
+        .custom(async (alias, { req }) => {
             const checkAlias = req.user.addresses.find(
                 (address) => address.alias === alias
             );
@@ -38,7 +38,7 @@ export const updateAddressValidators = [
         .withMessage("Address id is required")
         .isMongoId()
         .withMessage("Address id is not valid")
-        .custom(async (addressId, {req}) => {
+        .custom(async (addressId, { req }) => {
             const addressIndex = req.user.addresses.findIndex(
                 (address) => address._id.toString() === addressId
             );
@@ -53,7 +53,7 @@ export const updateAddressValidators = [
         .optional()
         .notEmpty()
         .withMessage("Alias is required")
-        .custom(async (alias, {req}) => {
+        .custom(async (alias, { req }) => {
             const checkAlias = req.user.addresses.find(
                 (address) => (address.alias === alias && address._id.toString() !== req.params.addressId)
             );
@@ -76,7 +76,6 @@ export const updateAddressValidators = [
         .withMessage("Postal Code is not valid"),
     check("phone")
         .optional()
-        .optional()
         .notEmpty()
         .isMobilePhone("any")
         .withMessage("Phone number is not valid"),
@@ -97,7 +96,7 @@ export const removeAddressValidator = [
         .withMessage("Address id is required")
         .isMongoId()
         .withMessage("Address id is not valid")
-        .custom(async (addressId, {req}) => {
+        .custom(async (addressId, { req }) => {
             const addressIndex = req.user.addresses.findIndex(
                 (address) => address._id.toString() === addressId
             );

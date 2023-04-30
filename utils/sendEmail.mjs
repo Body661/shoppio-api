@@ -3,6 +3,7 @@ import path from "path";
 import hbs from "nodemailer-express-handlebars";
 
 const sendEmail = async (options) => {
+  // Create a nodemailer transport using the provided SMTP settings
   const transporter = createTransport({
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
@@ -13,6 +14,7 @@ const sendEmail = async (options) => {
     },
   });
 
+  // Configure nodemailer to use Handlebars templates for email content
   const handlebarOptions = {
     viewEngine: {
       partialsDir: path.resolve("../templates/"),
@@ -20,10 +22,10 @@ const sendEmail = async (options) => {
     },
     viewPath: path.resolve("./templates/"),
   };
-
   transporter.use("compile", hbs(handlebarOptions));
 
-  const mailtOpts = {
+  // Set the email options including recipient, subject, template and context
+  const mailOptions = {
     from: process.env.EMAIL_USER,
     to: options.email,
     subject: options.subject,
@@ -31,7 +33,8 @@ const sendEmail = async (options) => {
     context: options.context,
   };
 
-  await transporter.sendMail(mailtOpts);
+  // Send the email using the configured transport and options
+  await transporter.sendMail(mailOptions);
 };
 
 export default sendEmail;

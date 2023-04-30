@@ -4,22 +4,29 @@ class ApiFeatures {
     this.queryString = queryString;
   }
 
+  // Remove excluded fields from the filter object
+  _removeExcludedFields(filter, excludedFields) {
+    excludedFields.forEach((field) => delete filter[field]);
+    return filter;
+  }
+
+  // Filter the query based on the given filter parameters
   filter() {
-    const filter = { ...this.queryString };
-    const excludesFields = ["page", "sort", "limit", "fields"];
-    excludesFields.forEach((field) => delete filter[field]);
+    const excludedFields = ["page", "sort", "limit", "fields", "keyword"];
+    let filter = this._removeExcludedFields({ ...this.queryString }, excludedFields);
 
     // Apply filters using [gte | gt | lte | lt]
-    let queryString = JSON.stringify(filter);
-    queryString = queryString.replace(
-      /(gte|gt|lte|lt)\b/g,
-      (match) => `$${match}`
+    let filterStr = JSON.stringify(filter);
+    filterStr = filterStr.replace(
+        /(gte|gt|lte|lt)\b/g,
+        (match) => `$${match}`
     );
 
-    this.query = this.query.find(JSON.parse(queryString));
+    this.query = this.query.find(JSON.parse(filterStr));
     return this;
   }
 
+  // Sort the query based on the given sort parameters
   sort() {
     if (this.queryString.sort) {
       const sortBy = this.queryString.sort.split(",").join(" ");
@@ -31,6 +38,7 @@ class ApiFeatures {
     return this;
   }
 
+  // Limit the query fields based on the given field parameters
   limit() {
     if (this.queryString.fields) {
       const fields = this.queryString.fields.split(",").join(" ");
@@ -42,6 +50,7 @@ class ApiFeatures {
     return this;
   }
 
+  // Search for documents using the keyword
   search(modelName) {
     if (this.queryString.keyword) {
       const searchQuery = {};
@@ -62,9 +71,10 @@ class ApiFeatures {
     return this;
   }
 
+  // Paginate the query results
   paginate(docsCount) {
-    const page = this.queryString.page * 1 || 1;
-    const limit = this.queryString.limit * 1 || 50;
+    const page = parseInt(this.queryString.page) || 1;
+    const limit = parseInt(this.queryString.limit) || 50;
     const skip = (page - 1) * limit;
     const endIndex = page * limit;
 
@@ -82,7 +92,7 @@ class ApiFeatures {
     }
 
     this.query = this.query.skip(skip).limit(limit);
-    this.paginationRes = pagination;
+    this.pagination = pagination;
 
     return this;
   }

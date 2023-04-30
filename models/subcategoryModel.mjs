@@ -18,14 +18,13 @@ const SubcategorySchema = new mongoose.Schema(
     },
     {timestamps: true}
 );
+// Pre-find hook to populate category field with name
 SubcategorySchema.pre(/^find/, function (next) {
-    this.populate([
-        {path: "category", select: "name"},
-    ]);
-
+    this.populate([{ path: "category", select: "name" }]);
     next();
 });
 
+// Create the Subcategory model using the Subcategory schema
 const SubcategoryModel = mongoose.model("Subcategory", SubcategorySchema);
 
 export default SubcategoryModel;

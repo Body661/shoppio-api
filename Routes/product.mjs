@@ -21,10 +21,13 @@ import ProductModel from "../models/productModel.mjs";
 import {check} from "express-validator";
 import validatorMiddleware from "../middlewares/validatorMiddleware.mjs";
 
+// Initialize the router
 const router = express.Router();
 
+// Use review routes as sub-route for productId
 router.use("/:productId/reviews", reviewRoutes);
 
+// Route for creating and fetching products
 router
     .route("/")
     .post(
@@ -38,6 +41,7 @@ router
     )
     .get(getProducts);
 
+// Route for getting, updating, and deleting a specific product
 router
     .route("/:id")
     .get(...getProductValidator, getProduct)
@@ -51,4 +55,5 @@ router
         updateProduct
     )
     .delete(auth, allowed("admin"), ...deleteProductValidator, deleteImages(ProductModel), deleteProduct);
+
 export default router;

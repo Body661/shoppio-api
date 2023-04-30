@@ -7,15 +7,16 @@ import OrderModel from "../models/orderModel.mjs";
 import ProductModel from "../models/productModel.mjs";
 import * as factory from "../utils/factoryHandler.mjs";
 import UserModel from "../models/userModel.mjs";
-import sendEmail from "../utils/sendEmail.mjs";
 
-dotenv.config({path: "config.env"});
+// Load environment variables from config file
+dotenv.config({ path: "config.env" });
 
+// Initialize Stripe with secret key and API version
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
     apiVersion: "2022-11-15",
 });
 
-// @desc    create cash order
+// Action for creating cash order
 // @route   POST /api/orders/cartId
 // @access  Private/Protected [User]
 export const createCashOrder = expressAsyncHandler(async (req, res, next) => {
@@ -28,7 +29,9 @@ export const createCashOrder = expressAsyncHandler(async (req, res, next) => {
         return next(new ApiError("No cart found", 404));
     }
 
-    const price = cart.totalPriceAfterDiscount ? cart.totalPriceAfterDiscount : cart.totalCartPrice
+    const price = cart.totalPriceAfterDiscount
+        ? cart.totalPriceAfterDiscount
+        : cart.totalCartPrice;
 
     const order = await OrderModel.create({
         user: req.user._id,
@@ -41,8 +44,8 @@ export const createCashOrder = expressAsyncHandler(async (req, res, next) => {
     if (order) {
         const bulkOptions = cart.cartItems.map((item) => ({
             updateOne: {
-                filter: {_id: item.product},
-                update: {$inc: {quantity: -item.quantity, sold: +item.quantity}},
+                filter: { _id: item.product },
+                update: { $inc: { quantity: -item.quantity, sold: +item.quantity } },
             },
         }));
         await ProductModel.bulkWrite(bulkOptions, {});
@@ -50,24 +53,25 @@ export const createCashOrder = expressAsyncHandler(async (req, res, next) => {
         await CartModel.findByIdAndDelete(req.params.cartId);
     }
 
-    res.status(201).json({data: order});
+    res.status(201).json({ data: order });
 });
 
+// Filter orders based on user role
 export const filterOrders = expressAsyncHandler(async (req, res, next) => {
-    if (req.user.role === "user") req.filterObj = {user: req.user._id};
+    if (req.user.role === "user") req.filterObj = { user: req.user._id };
     next();
 });
 
-// @desc    get all orders
+// Action for getting all orders
 // @route   POST /api/orders
 // @access  Private/Protected [Admin - User]
 export const getAllOrders = factory.getAllDocuments(OrderModel, "Order");
 
-// @desc    get specific order
+// Action for getting a specific order by ID
 // @route   GET /api/orders/:id
 // @access  Private/Protected [Admin - User]
 export const filterOrder = expressAsyncHandler(async (req, res, next) => {
-    if (req.user.role === "user") req.filterObj = {user: req.user._id};
+    if (req.user.role === "user") req.filterObj = { user: req.user._id };
     next();
 });
 export const getOrder = factory.getDocument(
@@ -75,7 +79,7 @@ export const getOrder = factory.getDocument(
     "No Order found for this Id"
 );
 
-// @desc    Update order pay state
+// Action for updating order pay state [paid | not paid]
 // @route   POST /api/orders/:id/pay
 // @access  Private/Protected [Admin]
 export const updateOrderPay = expressAsyncHandler(async (req, res, next) => {
@@ -94,10 +98,10 @@ export const updateOrderPay = expressAsyncHandler(async (req, res, next) => {
     }
 
     await order.save();
-    res.status(200).json({data: order});
+    res.status(200).json({ data: order });
 });
 
-// @desc    Update order delivered state
+// Action for Updating order delivery state
 // @route   POST /api/orders/:id/delivered
 // @access  Private/Protected [Admin]
 export const updateOrderDelivered = expressAsyncHandler(
@@ -117,18 +121,18 @@ export const updateOrderDelivered = expressAsyncHandler(
         }
 
         await order.save();
-        res.status(200).json({data: order});
+        res.status(200).json({ data: order });
     }
 );
 
-// @desc    Checkout stripe session
+// Action for creating stripe checkout session
 // @route   POST /api/orders/checkout/cartId
 // @access  Private/Protected [User]
 export const checkoutSession = expressAsyncHandler(async (req, res, next) => {
     try {
         const userId = req.user._id;
         const cartId = req.params.cartId;
-        const cartDetails = await CartModel.findOne({_id: cartId, user: userId});
+        const cartDetails = await CartModel.findOne({ _id: cartId, user: userId });
 
         if (!cartDetails) {
             return next(new ApiError("No cart found for this user and cart id", 404));
@@ -156,18 +160,18 @@ export const checkoutSession = expressAsyncHandler(async (req, res, next) => {
             metadata: req.body.shippingAddress,
         });
 
-        res.status(200).json({session});
+        res.status(200).json({ session });
     } catch (error) {
         next(error);
     }
 });
 
-const createOrder = async (session) => {
+export async function createOrder(session) {
     try {
         const cartId = session.client_reference_id;
         const shippingAddress = session.metadata;
         const price = session.amount_total / 100;
-        const user = await UserModel.findOne({email: session.customer_email});
+        const user = await UserModel.findOne({ email: session.customer_email });
         const cart = await CartModel.findById(cartId);
 
         if (!user) {
@@ -191,8 +195,8 @@ const createOrder = async (session) => {
         if (order) {
             const bulkOptions = cart.cartItems.map((item) => ({
                 updateOne: {
-                    filter: {_id: item.product},
-                    update: {$inc: {quantity: -item.quantity, sold: item.quantity}},
+                    filter: { _id: item.product },
+                    update: { $inc: { quantity: -item.quantity, sold: item.quantity } },
                 },
             }));
             await ProductModel.bulkWrite(bulkOptions);
@@ -201,7 +205,7 @@ const createOrder = async (session) => {
     } catch (error) {
         throw new Error("Failed to create order");
     }
-};
+}
 
 export const webhookCheckout = expressAsyncHandler(async (req, res, next) => {
     try {
@@ -210,7 +214,7 @@ export const webhookCheckout = expressAsyncHandler(async (req, res, next) => {
 
         if (event.type === "checkout.session.completed") {
             await createOrder(event.data.object);
-            res.status(201).json({received: true});
+            res.status(201).json({ received: true });
         }
 
     } catch (error) {

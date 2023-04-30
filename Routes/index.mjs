@@ -7,7 +7,7 @@ import userRoutes from "./user.mjs";
 import authRoutes from "./auth.mjs";
 import reviewRoutes from "./review.mjs";
 import wishlistRoutes from "./wishlist.mjs";
-import addressRoutes from "./adress.mjs";
+import addressRoutes from "./address.mjs";
 import couponRoutes from "./coupon.mjs";
 import cartRoutes from "./cart.mjs";
 import orderRoutes from "./order.mjs";

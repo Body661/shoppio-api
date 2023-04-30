@@ -34,7 +34,7 @@ router
     .delete(allowed("user"), deleteMe);
 
 router.put(
-    "/updateMyPassword",
+    "/my-password",
     allowed("user"),
     ...updateMyPassValidator,
     updateMyPass
@@ -55,7 +55,7 @@ router
     .delete(...deleteUserValidator, deleteUser);
 
 router.put(
-    "/changePassword/:id",
+    "/change-password/:id",
     ...updateUserPassValidator,
     updateUserPassword
 );

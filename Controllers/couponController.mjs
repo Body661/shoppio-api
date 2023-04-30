@@ -1,17 +1,17 @@
 import CouponModel from "../models/couponModel.mjs";
 import * as factory from "../utils/factoryHandler.mjs";
 
-// @desc Create a new Coupon
+// Action for creating a new coupon
 // @route POST /api/Coupons
 // @access Private/Protected [Admin]
 export const addCoupon = factory.createDocument(CouponModel);
 
-// @desc Get all Coupons
+// Action for getting all coupons
 // @route GET /api/coupons
 // @access Private/Protected [Admin]
 export const getCoupons = factory.getAllDocuments(CouponModel);
 
-// @desc Get a specific Coupon
+// Action for Getting a specific coupon
 // @route GET /api/coupons/:id
 // @access Private/Protected [Admin]
 export const getCoupon = factory.getDocument(
@@ -19,7 +19,7 @@ export const getCoupon = factory.getDocument(
     "Coupon code is invalid or expired"
 );
 
-// @desc Update a Coupon
+// Action for updating a coupon
 // @route PUT /api/coupons/:id
 // @access Private/Protected [Admin]
 export const updateCoupon = factory.updateDocument(
@@ -27,7 +27,7 @@ export const updateCoupon = factory.updateDocument(
     "Coupon not found"
 );
 
-// @desc Delete a Coupon
+// Action deleting a coupon by id
 // @route DELETE /api/Coupons/:id
 // @access Private/Protected [Admin]
 export const deleteCoupon = factory.deleteDocument(

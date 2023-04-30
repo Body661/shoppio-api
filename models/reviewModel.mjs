@@ -30,24 +30,26 @@ const ReviewSchema = new mongoose.Schema(
             required: [true, "Review must belong to product"],
         },
     },
-    {timestamps: true}
+    { timestamps: true }
 );
 
+// Pre-find hook to populate user field with name
 ReviewSchema.pre(/^find/, function (next) {
     this.populate("user", "name");
     next();
 });
 
+// Static method to calculate average ratings and total ratings for a product
 ReviewSchema.statics.calcRatings = async function (productId) {
     const result = await this.aggregate([
         {
-            $match: {product: productId},
+            $match: { product: productId },
         },
         {
             $group: {
                 _id: "product",
-                ratingsAvg: {$avg: "$ratings"},
-                ratingsQuantity: {$sum: 1},
+                ratingsAvg: { $avg: "$ratings" },
+                ratingsQuantity: { $sum: 1 },
             },
         },
     ]);
@@ -65,14 +67,17 @@ ReviewSchema.statics.calcRatings = async function (productId) {
     }
 };
 
+// Post-save hook to recalculate ratings for the product
 ReviewSchema.post("save", function () {
     this.constructor.calcRatings(this.product);
 });
 
+// Post-remove hook to recalculate ratings for the product
 ReviewSchema.post("remove", function () {
     this.constructor.calcRatings(this.product);
 });
 
+// Create the Review model using the Review schema
 const ReviewModel = mongoose.model("Review", ReviewSchema);
 
 export default ReviewModel;

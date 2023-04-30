@@ -42,17 +42,17 @@ export const imageProcessing = expressAsyncHandler(async (req, res, next) => {
     next();
 });
 
-//@desc Create new product
-//@route POST /api/products
-//@access Private/Protected [Admin]
+// Action for create new product
+// @route POST /api/products
+// @access Private/Protected [Admin]
 export const addProduct = factory.createDocument(ProductModel);
 
-// @desc Get a list of all products
+// Action for getting a list of all products
 // @route GET /api/products
 // @access Public
 export const getProducts = factory.getAllDocuments(ProductModel, "Products");
 
-// @desc Get a list of all products
+// Action for getting a list of all products
 // @route GET /api/products/:id
 // @access Public
 export const getProduct = factory.getDocument(
@@ -61,7 +61,7 @@ export const getProduct = factory.getDocument(
     "reviews"
 );
 
-// @desc update a product
+// Action for updating a product
 // @route PUT /api/products/:id
 // @access Private/Protected [Admin]
 export const updateProduct = factory.updateDocument(
@@ -69,7 +69,7 @@ export const updateProduct = factory.updateDocument(
     "Product not found",
 );
 
-// @desc delete a product
+// Action for deleting a product
 // @route DELETE /api/products/:id
 // @access Private/Protected [Admin]
 export const deleteProduct = factory.deleteDocument(

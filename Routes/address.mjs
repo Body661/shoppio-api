@@ -1,5 +1,4 @@
 import express from "express";
-import { allowed, auth } from "../controllers/authController.mjs";
 import {
     addAddress,
     getAddressById,
@@ -12,6 +11,7 @@ import {
     removeAddressValidator,
     updateAddressValidators,
 } from "./validators/addressValidators.mjs";
+import {allowed, auth} from "../Controllers/authController.mjs";
 
 // Initialize the router
 const router = express.Router();

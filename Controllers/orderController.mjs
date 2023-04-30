@@ -209,7 +209,7 @@ export const webhookCheckout = expressAsyncHandler(async (req, res, next) => {
         const event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
 
         if (event.type === "checkout.session.completed") {
-            const order = await createOrder(event.data.object);
+            await createOrder(event.data.object);
             res.status(201).json({received: true});
         }
 

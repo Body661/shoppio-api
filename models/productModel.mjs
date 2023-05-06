@@ -83,32 +83,6 @@ ProductSchema.pre(/^find/, function (next) {
     next();
 });
 
-// Helper function to set image URLs
-const setImgUrl = (doc) => {
-    if (doc.cover) {
-        doc.cover = `${process.env.BASE_URL}/products/${doc.cover}`;
-    }
-
-    if (doc.images) {
-        const images = [];
-
-        doc.images.forEach((img) => {
-            images.push(`${process.env.BASE_URL}/products/${img}`);
-        });
-
-        doc.images = images;
-    }
-};
-
-// Post-init and post-save hooks to update image URLs
-ProductSchema.post("init", (doc) => {
-    setImgUrl(doc);
-});
-
-ProductSchema.post("save", (doc) => {
-    setImgUrl(doc);
-});
-
 // Create the Product model using the Product schema
 const ProductModel = mongoose.model("Product", ProductSchema);
 

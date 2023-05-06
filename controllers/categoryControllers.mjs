@@ -1,26 +1,5 @@
-import {uuid} from "uuidv4";
-import sharp from "sharp";
-import expressAsyncHandler from "express-async-handler";
 import CategoryModel from "../models/categoryModel.mjs";
 import * as factory from "../utils/factoryHandler.mjs";
-import {uploadSingle} from "../middlewares/imageUploadMiddleware.mjs";
-
-export const uploadCatImg = uploadSingle("img");
-export const imageProcessing = expressAsyncHandler(async (req, res, next) => {
-    const filename = `category-${uuid()}-${Date.now()}.png`;
-
-    if (req?.file) {
-        await sharp(req.file.buffer)
-            .resize(130, 130)
-            .toFormat("png", {})
-            .png({quality: 80})
-            .toFile(`uploads/categories/${filename}`);
-
-        req.body.img = filename;
-    }
-
-    next();
-});
 
 // Action for creating a new category
 // @route POST /api/categories

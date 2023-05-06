@@ -15,6 +15,7 @@ import ApiError from "./utils/apiError.mjs";
 import errorMiddleware from "./middlewares/errorMiddleware.mjs";
 import mountRoutes from "./Routes/index.mjs";
 import { webhookCheckout } from "./controllers/orderController.mjs";
+import aws from "aws-sdk";
 
 dotenv.config({ path: "config.env" });
 
@@ -36,6 +37,12 @@ app.post(
     express.raw({ type: "application/json" }),
     webhookCheckout
 );
+
+aws.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION
+});
 
 // Set up environment variables
 const { PORT } = process.env;

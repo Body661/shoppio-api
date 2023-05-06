@@ -4,8 +4,6 @@ import {
     deleteBrand,
     getBrandById,
     getBrands,
-    uploadBrandImg,
-    imageProcessing,
     updateBrand,
 } from "../controllers/brandControllers.mjs";
 import {
@@ -15,8 +13,10 @@ import {
     updateBrandValidator,
 } from "./validators/brandValidators.mjs";
 import {allowed, auth} from "../controllers/authController.mjs";
-import {deleteImages} from "../utils/deleteImages.mjs";
+import {deleteImageMiddleware} from "../middlewares/deleteImageMiddleware.mjs";
 import BrandModel from "../models/brandModel.mjs";
+import {uploadSingle} from "../middlewares/imageUploadMiddleware.mjs";
+import {imageProcessingMiddleware} from "../middlewares/imageProcessingMiddleware.mjs";
 
 const router = express.Router();
 
@@ -25,9 +25,9 @@ router
     .post(
         auth,
         allowed("admin"),
-        uploadBrandImg,
+        uploadSingle("img"),
         ...addBrandValidator,
-        imageProcessing,
+        imageProcessingMiddleware('brand'),
         addBrand
     )
     .get(getBrands);
@@ -38,12 +38,12 @@ router
     .put(
         auth,
         allowed("admin"),
-        deleteImages(BrandModel),
-        uploadBrandImg,
+        deleteImageMiddleware(BrandModel),
+        uploadSingle("img"),
         ...updateBrandValidator,
-        imageProcessing,
+        imageProcessingMiddleware('brand'),
         updateBrand
     )
-    .delete(auth, allowed("admin"), ...deleteBrandValidator, deleteImages(BrandModel), deleteBrand);
+    .delete(auth, allowed("admin"), ...deleteBrandValidator, deleteImageMiddleware(BrandModel), deleteBrand);
 
 export default router;

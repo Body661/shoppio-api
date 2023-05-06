@@ -5,42 +5,10 @@ import ProductModel from "../models/productModel.mjs";
 import * as factory from "../utils/factoryHandler.mjs";
 import {uploadMultiple} from "../middlewares/imageUploadMiddleware.mjs";
 
-export const uploadProductImgs = uploadMultiple([
+export const uploadProductImages = uploadMultiple([
     {name: "cover", maxCount: 1},
     {name: "images", maxCount: 5},
 ]);
-
-export const imageProcessing = expressAsyncHandler(async (req, res, next) => {
-    if (req.files.cover) {
-        const coverFilename = `product-cover-${uuid()}-${Date.now()}.png`;
-
-        await sharp(req.files.cover[0].buffer)
-            .resize(600)
-            .toFormat("png")
-            .png({quality: 60})
-            .toFile(`uploads/products/${coverFilename}`);
-
-        req.body.cover = coverFilename;
-    }
-
-    if (req.files.images) {
-        req.body.images = [];
-
-        await Promise.all(
-            req.files.images.map(async (img, index) => {
-                const imagFilename = `product-${index}-${uuid()}-${Date.now()}.png`;
-
-                await sharp(img.buffer)
-                    .toFormat("png")
-                    .png({quality: 95})
-                    .toFile(`uploads/products/${imagFilename}`);
-
-                req.body.images.push(imagFilename);
-            })
-        );
-    }
-    next();
-});
 
 // Action for create new product
 // @route POST /api/products

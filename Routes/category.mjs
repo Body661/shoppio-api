@@ -4,9 +4,7 @@ import {
     deleteCategory,
     getCategories,
     getCategory,
-    imageProcessing,
     updateCategory,
-    uploadCatImg,
 } from "../controllers/categoryControllers.mjs";
 
 import {
@@ -19,8 +17,10 @@ import {
 import subcategoryRoutes from "./subcategory.mjs";
 
 import {allowed, auth} from "../controllers/authController.mjs";
-import {deleteImages} from "../utils/deleteImages.mjs";
+import {deleteImageMiddleware} from "../middlewares/deleteImageMiddleware.mjs";
 import CategoryModel from "../models/categoryModel.mjs";
+import {uploadSingle} from "../middlewares/imageUploadMiddleware.mjs";
+import {imageProcessingMiddleware} from "../middlewares/imageProcessingMiddleware.mjs";
 
 const router = express.Router();
 
@@ -31,9 +31,9 @@ router
     .post(
         auth,
         allowed("admin"),
-        uploadCatImg,
+        uploadSingle("img"),
         ...createCategoryValidator,
-        imageProcessing,
+        imageProcessingMiddleware('category'),
         addCategory
     )
     .get(getCategories);
@@ -44,12 +44,12 @@ router
     .put(
         auth,
         allowed("admin"),
-        uploadCatImg,
+        uploadSingle("img"),
         ...updateCategoryValidator,
-        deleteImages(CategoryModel),
-        imageProcessing,
+        deleteImageMiddleware(CategoryModel),
+        imageProcessingMiddleware('category'),
         updateCategory
     )
-    .delete(auth, allowed("admin"), ...deleteCategoryValidator, deleteImages(CategoryModel), deleteCategory);
+    .delete(auth, allowed("admin"), ...deleteCategoryValidator, deleteImageMiddleware(CategoryModel), deleteCategory);
 
 export default router;

@@ -1,32 +1,5 @@
-import expressAsyncHandler from "express-async-handler";
-import { uuid } from "uuidv4";
-import sharp from "sharp";
 import BrandModel from "../models/brandModel.mjs";
 import * as factory from "../utils/factoryHandler.mjs";
-import { uploadSingle } from "../middlewares/imageUploadMiddleware.mjs";
-
-// Middleware for uploading a single brand image
-export const uploadBrandImg = uploadSingle("img");
-
-// Middleware for processing the uploaded brand image
-export const imageProcessing = expressAsyncHandler(async (req, res, next) => {
-    // Generate a unique filename for the uploaded image
-    const filename = `brand-${uuid()}-${Date.now()}.png`;
-
-    if (req?.file) {
-        // Resize, convert to PNG, and save the image using Sharp
-        await sharp(req.file.buffer)
-            .resize(130, 130)
-            .toFormat("png", {})
-            .png({ quality: 80 })
-            .toFile(`uploads/brands/${filename}`);
-
-        // Set the img field in the request body
-        req.body.img = filename;
-    }
-
-    next();
-});
 
 // Action for creating a new brand
 // @Route POST /api/brands

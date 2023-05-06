@@ -4,9 +4,8 @@ import {
     deleteProduct,
     getProduct,
     getProducts,
-    imageProcessing,
     updateProduct,
-    uploadProductImgs,
+    uploadProductImages,
 } from "../controllers/productControllers.mjs";
 import {
     createProductValidator,
@@ -16,10 +15,11 @@ import {
 } from "./validators/productValidators.mjs";
 import {allowed, auth} from "../controllers/authController.mjs";
 import reviewRoutes from "./review.mjs";
-import {deleteImages} from "../utils/deleteImages.mjs";
+import {deleteImageMiddleware} from "../middlewares/deleteImageMiddleware.mjs";
 import ProductModel from "../models/productModel.mjs";
 import {check} from "express-validator";
 import validatorMiddleware from "../middlewares/validatorMiddleware.mjs";
+import {imageProcessingMiddleware} from "../middlewares/imageProcessingMiddleware.mjs";
 
 // Initialize the router
 const router = express.Router();
@@ -33,9 +33,9 @@ router
     .post(
         auth,
         allowed("admin"),
-        uploadProductImgs,
+        uploadProductImages,
         ...createProductValidator,
-        imageProcessing,
+        imageProcessingMiddleware('product'),
         [check("cover").notEmpty().withMessage("Product imageCover is required"), validatorMiddleware],
         addProduct
     )
@@ -48,12 +48,12 @@ router
     .put(
         auth,
         allowed("admin"),
-        deleteImages(ProductModel),
-        uploadProductImgs,
+        deleteImageMiddleware(ProductModel),
+        uploadProductImages,
         ...updateProductValidator,
-        imageProcessing,
+        imageProcessingMiddleware('product'),
         updateProduct
     )
-    .delete(auth, allowed("admin"), ...deleteProductValidator, deleteImages(ProductModel), deleteProduct);
+    .delete(auth, allowed("admin"), ...deleteProductValidator, deleteImageMiddleware(ProductModel), deleteProduct);
 
 export default router;

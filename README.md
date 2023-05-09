@@ -5,6 +5,7 @@ This project's API is a comprehensive e-commerce solution built with Node.js, Ex
 ## Technologies Used
 - Node.js
 - Express
+- AWS
 - MongoDB
 - Mongoose
 - JWT (JSON Web Tokens)
